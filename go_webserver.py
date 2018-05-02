@@ -133,7 +133,7 @@ class MyHandler(BaseHTTPRequestHandler):
         "That's a nice move",
         "It's complicated...",
         "Who is winning??",
-        "You are good!"
+        "You are good!",
         "Are you an AGA member yet?",
         ]
 

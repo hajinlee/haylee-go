@@ -56,12 +56,7 @@ class MyHandler(BaseHTTPRequestHandler):
             postvars = {}
 
         if 'command' not in postvars:
-            self.send_response(400)
-            self.send_header('Content-type', 'text/html')
-            self.end_headers()
-            x = self.wfile.write
-            x('Error: bad request')
-            return
+            self.error_handler()
 
         command = postvars['command'][0]
 
@@ -105,6 +100,9 @@ class MyHandler(BaseHTTPRequestHandler):
                 game_state.game.remove_dead_stones(postvars['dead'][0])
             game_state.removed = True
 
+        else:
+            self.error_handler()
+
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
@@ -118,6 +116,14 @@ class MyHandler(BaseHTTPRequestHandler):
         x(self.prompt())
         x(self.playing_tools())
         x(self.new_game())
+
+    def error_handler(self):
+        self.send_response(400)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+        x = self.wfile.write
+        x('Error: bad request')
+        return
 
     def greeting(self):
         playing_messages = [

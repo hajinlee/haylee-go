@@ -56,7 +56,7 @@ class MyHandler(BaseHTTPRequestHandler):
             postvars = {}
 
         if 'command' not in postvars:
-            self.error_handler()
+            return self.error_handler()
 
         command = postvars['command'][0]
 
@@ -101,7 +101,7 @@ class MyHandler(BaseHTTPRequestHandler):
             game_state.removed = True
 
         else:
-            self.error_handler()
+            return self.error_handler()
 
         self.send_response(200)
         self.send_header('Content-type', 'text/html')

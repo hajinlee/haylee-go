@@ -152,7 +152,6 @@ class MyHandler(BaseHTTPRequestHandler):
         else:
             return "Thanks for the game!<br><br>"
 
-
     def remove_dead(self):
         if game_state.state == SCORING and game_state.removed == False:
             return form_html_dead
@@ -164,6 +163,7 @@ class MyHandler(BaseHTTPRequestHandler):
             game_state.state = OVER
             black = game_state.game.score()[0][1]
             white = game_state.game.score()[1][1]
+            game_state.removed = False
             if black > white:
                 diff = black - white
                 return 'Final score: Black ' + str(black) + ' points, White ' + str(white) + ' points<br>Black won by ' + str(diff) + ' points.<br>'

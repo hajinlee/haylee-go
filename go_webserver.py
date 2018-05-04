@@ -30,7 +30,7 @@ form_html_resign = '<form method="post"> <input type="hidden" name="command" val
 
 form_html_dead = '<form method="post"> Select dead stones: <input type="text" name="dead"><br> <input type="hidden" name="command" value="Dead Stones"><input type="submit" name="button" value="Submit"></form>'
 
-button_new = '<form method="post"> <input type="hidden" name="command" value="New Game"> <input type="submit" name="button" value="New Game">'
+form_html_new = '<form method="post"> <input type="hidden" name="command" value="New Game"> <input type="submit" name="button" value="New Game">'
 
 class MyHandler(BaseHTTPRequestHandler):
 
@@ -39,12 +39,11 @@ class MyHandler(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'text/html')
         self.end_headers()
         x = self.wfile.write
-        x(self.greeting())
+
         x(self.show_board())
-        x(self.status_print())
+        x(self.greeting())
         x(self.prompt())
         x(self.playing_tools())
-
 
     def do_POST(self):
         ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
@@ -108,14 +107,12 @@ class MyHandler(BaseHTTPRequestHandler):
         self.end_headers()
         x = self.wfile.write
 
-        x(self.greeting())
         x(self.show_board())
-        x(self.status_print())
+        x(self.greeting())
         x(self.remove_dead())
         x(self.result_print())
         x(self.prompt())
         x(self.playing_tools())
-        x(self.new_game())
 
     def error_handler(self):
         self.send_response(400)
@@ -125,37 +122,36 @@ class MyHandler(BaseHTTPRequestHandler):
         x('Error: bad request')
         return
 
+    def show_board(self):
+        return 'Welcome to Haylee Go' + \
+               '<pre>' + game_state.game.board.show() + '</pre>'
+
     def greeting(self):
         playing_messages = [
         "Hmmm, that's an interesting move!",
         "Is that sente?",
         "I didn't see that one!",
-        "That's a nice move",
+        "That's a nice move!",
         "It's complicated...",
         "Who is winning??",
         "You are good!",
         "Are you an AGA member yet?",
         ]
 
-        if game_state.state == PLAYING:
-            ret = random.choice(playing_messages)
+        if game_state.state == WAITING:
+            return  'Hello! How about a nice game of Go?<br><br>' + \
+                    game_state.game.whose_turn() + ' to play:<br>'
+
+        elif game_state.state == PLAYING:
+            return random.choice(playing_messages) + '<br><br>' + \
+                   game_state.game.whose_turn() + ' to play:<br>'
+
         elif game_state.state == SCORING:
-            ret = "That was a tough game!"
-        elif game_state.state == WAITING:
-            ret = 'Hello!!<br>How about a nice game of Go?'
+            return "That was a tough game!<br><br>"
+
         else:
-            ret = "Thanks for the game!"
+            return "Thanks for the game!<br><br>"
 
-        return ret + '<br>'
-
-    def show_board(self):
-        return '<pre>' + game_state.game.board.show() + '</pre>'
-
-    def status_print(self):
-        if game_state.state in [PLAYING, WAITING]:
-            return game_state.game.whose_turn() + ' to play:<br>'
-        else:
-            return 'The game is finished.<br>'
 
     def remove_dead(self):
         if game_state.state == SCORING and game_state.removed == False:
@@ -165,6 +161,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
     def result_print(self):
         if game_state.removed == True:
+            game_state.state = OVER
             black = game_state.game.score()[0][1]
             white = game_state.game.score()[1][1]
             if black > white:
@@ -173,7 +170,6 @@ class MyHandler(BaseHTTPRequestHandler):
             else:
                 diff = white - black
                 return 'Final score: Black ' + str(black) + ' points, White ' + str(white) + ' points<br>White won by ' + str(diff) + ' points.<br>'
-            game_state.state = OVER
         else:
             return ' '
 
@@ -189,13 +185,9 @@ class MyHandler(BaseHTTPRequestHandler):
 
     def playing_tools(self):
         if game_state.state in [PLAYING, WAITING]:
-            return form_html_move + form_html_pass + form_html_resign
+            return form_html_move + form_html_pass + form_html_resign + form_html_new
         else:
-            return ' '
-
-    def new_game(self):
-        return 'Start a new game?<br>' + button_new
-
+            return form_html_new
 
 
 if __name__ == '__main__':

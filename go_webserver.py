@@ -55,7 +55,7 @@ class MyHandler(BaseHTTPRequestHandler):
             postvars = {}
 
         if 'command' not in postvars:
-            return self.error_handler()
+            return self.error_bad_request()
 
         command = postvars['command'][0]
 
@@ -100,7 +100,7 @@ class MyHandler(BaseHTTPRequestHandler):
             game_state.removed = True
 
         else:
-            return self.error_handler()
+            return self.error_bad_request()
 
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
@@ -114,12 +114,20 @@ class MyHandler(BaseHTTPRequestHandler):
         x(self.prompt())
         x(self.playing_tools())
 
-    def error_handler(self):
+    def error_bad_request(self):
         self.send_response(400)
-        self.send_header('Content-type', 'text/html')
+        self.send_header('Content-type', 'text/plain')
         self.end_headers()
         x = self.wfile.write
         x('Error: bad request')
+        return
+
+    def error_not_found(self):
+        self.send_response(404)
+        self.send_header('Content-type', 'text/plain')
+        self.end_headers()
+        x = self.wfile.write
+        x('Error: not found')
         return
 
     def show_board(self):

@@ -1,7 +1,9 @@
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 from go import Board, Game, IllegalMoveException, EMPTY, BLACK, WHITE
 import cgi
+import os
 import random
+import urlparse
 
 # To track the game state across requests, we use a "ServerState" object.
 # In the future, this might be stored in a database.
@@ -35,6 +37,15 @@ form_html_new = '<form method="post"> <input type="hidden" name="command" value=
 class MyHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
+        # parse path out of the HTTP request
+        parts = urlparse.urlparse(self.path)
+        # (relative to root)
+        path_components = parts.path[1:].split('/')
+
+        # check for requests for static assets
+        if len(path_components) == 2 and path_components[0] == 'assets':
+            return self.do_GET_asset(path_components[1])
+
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
@@ -197,6 +208,29 @@ class MyHandler(BaseHTTPRequestHandler):
         else:
             return form_html_new
 
+    def do_GET_asset(self, filename):
+        # respond to a request for a static asset, e.g. image file
+        rel_path = os.path.join('assets', filename)
+        extension = filename.split('.')[-1]
+        content_type = {'jpg': 'image/jpeg',
+                        'png': 'image/png',
+                        'css': 'text/css',
+                        'js': 'text/javascript',
+                        }.get(extension)
+
+        try:
+            data = open(rel_path, 'rb').read()
+        except IOError:
+            return self.error_not_found()
+
+        self.send_response(200)
+        if content_type:
+            self.send_header('Content-type', content_type)
+        self.send_header('Content-length', bytes(len(data)))
+        # todo: add cache headers
+        self.end_headers()
+
+        self.wfile.write(data)
 
 if __name__ == '__main__':
     server = HTTPServer(('localhost', 8000), MyHandler)

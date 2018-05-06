@@ -24,6 +24,15 @@ class ServerState(object):
 
 game_state = ServerState()
 
+html_header = '''<!DOCTYPE html>
+<html>
+<head>
+<title>Haylee Go</title>
+<link rel="icon" href="assets/haylee-logo-192x192.png" sizes="192x192" />
+<link rel="stylesheet" href="assets/haylee-go.css" type="text/css" />
+</head>
+<body>'''
+
 form_html_move = '<form method="post"> X coord: <input type="text" name="xcoord"><br> Y coord: <input type="text" name="ycoord"><br> <input type="hidden" name="command" value="New Move"> <input type="submit" name="button" value="Submit the move"></form>'
 
 form_html_pass = '<form method="post"> <input type="hidden" name="command" value="Pass"> <input type="submit" name="button" value="Pass"></form>'
@@ -33,6 +42,8 @@ form_html_resign = '<form method="post"> <input type="hidden" name="command" val
 form_html_dead = '<form method="post"> Select dead stones: <input type="text" name="dead"><br> <input type="hidden" name="command" value="Dead Stones"><input type="submit" name="button" value="Submit"></form>'
 
 form_html_new = '<form method="post"> <input type="hidden" name="command" value="New Game"> <input type="submit" name="button" value="New Game">'
+
+html_footer = '''</body></html>'''
 
 class MyHandler(BaseHTTPRequestHandler):
 
@@ -51,10 +62,12 @@ class MyHandler(BaseHTTPRequestHandler):
         self.end_headers()
         x = self.wfile.write
 
+        x(html_header)
         x(self.show_board())
         x(self.greeting())
         x(self.prompt())
         x(self.playing_tools())
+        x(html_footer)
 
     def do_POST(self):
         ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
@@ -118,12 +131,14 @@ class MyHandler(BaseHTTPRequestHandler):
         self.end_headers()
         x = self.wfile.write
 
+        x(html_header)
         x(self.show_board())
         x(self.greeting())
         x(self.remove_dead())
         x(self.result_print())
         x(self.prompt())
         x(self.playing_tools())
+        x(html_footer)
 
     def error_bad_request(self):
         self.send_response(400)
@@ -142,7 +157,7 @@ class MyHandler(BaseHTTPRequestHandler):
         return
 
     def show_board(self):
-        return 'Welcome to Haylee Go' + \
+        return '<h1>Welcome to Haylee Go</h1>' + \
                '<pre>' + game_state.game.board.show() + '</pre>'
 
     def greeting(self):

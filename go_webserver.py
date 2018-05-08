@@ -31,7 +31,7 @@ html_header = '''<!DOCTYPE html>
 <link rel="icon" href="assets/haylee-logo-192x192.png" sizes="192x192" />
 <link rel="stylesheet" href="assets/haylee-go.css" type="text/css" />
 </head>
-<body>'''
+<body><div class="container">'''
 
 form_html_move = '<form method="post"> X coord: <input type="text" name="xcoord"><br> Y coord: <input type="text" name="ycoord"><br> <input type="hidden" name="command" value="New Move"> <input type="submit" name="button" value="Submit the move"></form>'
 
@@ -43,7 +43,13 @@ form_html_dead = '<form method="post"> Select dead stones: <input type="text" na
 
 form_html_new = '<form method="post"> <input type="hidden" name="command" value="New Game"> <input type="submit" name="button" value="New Game">'
 
-html_footer = '''</body></html>'''
+html_footer = '''</div></body></html>'''
+
+canvas = '''<canvas id="test" style="border:2px solid #000000;">
+  If the browser can't display the canvas, this text is rendered.
+</canvas>
+<script src="assets/canvas.js"></script>
+'''
 
 class MyHandler(BaseHTTPRequestHandler):
 
@@ -157,8 +163,8 @@ class MyHandler(BaseHTTPRequestHandler):
         return
 
     def show_board(self):
-        return '<h1>Welcome to Haylee Go</h1>' + \
-               '<pre>' + game_state.game.board.show() + '</pre>'
+        return '<h1>Welcome to Haylee Go</h1>' + canvas
+               #'<pre>' + game_state.game.board.show() + '</pre>'
 
     def greeting(self):
         playing_messages = [
@@ -173,18 +179,18 @@ class MyHandler(BaseHTTPRequestHandler):
         ]
 
         if game_state.state == WAITING:
-            return  'Hello! How about a nice game of Go?<br><br>' + \
-                    game_state.game.whose_turn() + ' to play:<br>'
+            return  '<br><br><h3>Hello! How about a nice game of Go?</h3><h4>' + \
+                    game_state.game.whose_turn() + ' to play:</h4>'
 
         elif game_state.state == PLAYING:
-            return random.choice(playing_messages) + '<br><br>' + \
-                   game_state.game.whose_turn() + ' to play:<br>'
+            return '<br><br><h3>' + random.choice(playing_messages) + '</h3><h4>' + \
+                   game_state.game.whose_turn() + ' to play:</h4>'
 
         elif game_state.state == SCORING:
-            return "That was a tough game!<br><br>"
+            return "<br><br><h3>That was a tough game!</h3>"
 
         else:
-            return "Thanks for the game!<br><br>"
+            return "<br><br><h3>Thanks for the game!</h3>"
 
     def remove_dead(self):
         if game_state.state == SCORING and game_state.removed == False:
@@ -211,9 +217,9 @@ class MyHandler(BaseHTTPRequestHandler):
         if game_state.state in [PLAYING, WAITING]:
             if game_state.illegal:
                 game_state.illegal = False
-                return 'Illegal move. Try again?<br>'
+                return '<h4>Illegal move. Try again?</h4>'
             else:
-                return 'Play or Pass!<br>'
+                return '<h4>Play or Pass!</h4>'
         else:
             return ' '
 

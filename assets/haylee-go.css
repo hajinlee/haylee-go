@@ -10,3 +10,28 @@ body {
   padding-left: 15px;
   padding-right: 15px;
 }
+
+.btn-success {
+  color: #fff;
+  background-color: #5cb85c;
+  border-color: #4cae4c;
+
+  .btn-success:focus, .btn-success.focus {
+    color: #fff;
+    background-color: #449d44;
+    border-color: #255625;
+  }
+
+input.resign {
+  background-color: MediumSeaGreen;
+  color: white;
+  font-size: 400%;
+}
+
+.col-sm-4 {
+  position: relative;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+  width: 33.33%;
+}

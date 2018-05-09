@@ -35,13 +35,13 @@ html_header = '''<!DOCTYPE html>
 
 form_html_move = '<form method="post"> <input type="hidden" id="xcoord" name="xcoord"><br> <input type="hidden" id="ycoord" name="ycoord"><br> <input type="hidden" name="command" value="New Move"> <input type="submit" id="submit" name="button" style="display: none"></form>'
 
-form_html_pass = '<form method="post"> <input type="hidden" name="command" value="Pass"> <input type="submit" name="button" value="Pass"></form>'
+form_html_pass = '<form method="post"> <input type="hidden" name="command" value="Pass"><input type="submit" name="button" value="Pass" style="background-color:MediumSeaGreen;color:white;font-size:150%"></form>'
 
-form_html_resign = '<form method="post"> <input type="hidden" name="command" value="Resign"> <input type="submit" name="button" value="Resign"></form>'
+form_html_resign = '<form method="post"> <input type="hidden" name="command" value="Resign"> <input type="submit" id="resign" name="button" value="Resign" style="background-color:Orange;color:white;font-size:150%"></form>'
 
-form_html_dead = '<form method="post"> Select dead stones: <input type="text" name="dead"><br> <input type="hidden" name="command" value="Dead Stones"><input type="submit" name="button" value="Submit"></form>'
+form_html_dead = '<form method="post"> Select dead stones: <input type="text" name="dead"><br> <input type="hidden" name="command" value="Dead Stones"><input type="submit" name="button" value="Submit" style="background-color:Tomato;color:white;font-size:150%"></form>'
 
-form_html_new = '<form method="post"> <input type="hidden" name="command" value="New Game"> <input type="submit" name="button" value="New Game">'
+form_html_new = '<form method="post"> <input type="hidden" name="command" value="New Game"> <input type="submit" name="button" value="New Game" style="background-color:SlateBlue;color:white;font-size:150%">'
 
 html_footer = '''</div></body></html>'''
 
@@ -227,7 +227,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
     def playing_tools(self):
         if game_state.state in [PLAYING, WAITING]:
-            return form_html_move + form_html_pass + form_html_resign + form_html_new
+            return form_html_move + form_html_pass + '<br>' + form_html_resign + '<br>' + form_html_new + '<br>'
         else:
             return form_html_new
 

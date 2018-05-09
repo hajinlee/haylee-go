@@ -5,14 +5,6 @@ var ctx = myCanvas.getContext('2d');
 //myCanvas.style.left = '50px';
 //myCanvas.style.top = '50px';
 
-function board_js() {
-  var board_js = [];
-  for (let i=0; i<19; i++) {
-    board_js.push("+++++++++++++++++++");
-  }
-  return board_js;
-}
-
 var cell_width = 24;
 var cell_height = 26;
 var margin = 15;
@@ -44,8 +36,19 @@ function onMouseClick(event) {
   var offsetY = event.clientY - rect.top;
   var pos = pixelToCoord(offsetX, offsetY);
   console.log(offsetX, offsetY, pos.x, pos.y);
+  clickToSubmit(pos.y, pos.x);
 }
+
 myCanvas.addEventListener('click', onMouseClick, true);
+
+function clickToSubmit(x, y) {
+  var xbox = document.getElementById('xcoord');
+  xbox.value = x.toFixed(0);
+  var ybox = document.getElementById('ycoord');
+  ybox.value = y.toFixed(0);
+  var submit_button = document.getElementById('submit');
+  submit_button.click();
+}
 
 ctx.fillStyle = 'AntiqueWhite';
 ctx.fillRect( 0, 0, board_width, board_height );
@@ -94,7 +97,9 @@ function addStone(color, x, y) {
   ctx.fill();
 }
 
-function updateBoard() {
+// given a list of strings like ["+++@++", ...]
+// perform addStone() for all the black and white stones
+function updateBoard(board_js) {
   for (let i=0; i<19; i++) {
     for (let j=0; j<19; j++) {
       if (board_js[i][j] == '@') {
@@ -106,10 +111,3 @@ function updateBoard() {
     }
   }
 }
-
-myboard = board_js()
-myboard[2][3] = "@"
-myboard[16][16] = "O"
-updateBoard()
-
-addStone('black', 2, 3);

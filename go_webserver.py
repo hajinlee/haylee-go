@@ -33,7 +33,7 @@ html_header = '''<!DOCTYPE html>
 </head>
 <body><div class="container">'''
 
-form_html_move = '<form method="post"> X coord: <input type="text" name="xcoord"><br> Y coord: <input type="text" name="ycoord"><br> <input type="hidden" name="command" value="New Move"> <input type="submit" name="button" value="Submit the move"></form>'
+form_html_move = '<form method="post"> <input type="hidden" id="xcoord" name="xcoord"><br> <input type="hidden" id="ycoord" name="ycoord"><br> <input type="hidden" name="command" value="New Move"> <input type="submit" id="submit" name="button" style="display: none"></form>'
 
 form_html_pass = '<form method="post"> <input type="hidden" name="command" value="Pass"> <input type="submit" name="button" value="Pass"></form>'
 
@@ -163,8 +163,10 @@ class MyHandler(BaseHTTPRequestHandler):
         return
 
     def show_board(self):
-        return '<h1>Welcome to Haylee Go</h1>' + canvas
-               #'<pre>' + game_state.game.board.show() + '</pre>'
+        return '<h1>Welcome to Haylee Go</h1>' + \
+                canvas + \
+             '<script>var board_js = ' + game_state.game.board.show_js() + '; updateBoard(board_js);</script>'
+
 
     def greeting(self):
         playing_messages = [

@@ -122,7 +122,11 @@ class Board(object):
         return 'Board(%d, %r)' % (self.size, self.show())
 
     def show(self):
+        # returns a string like "++++++@@@@@+++\n+++++++++++\n++++...."
         return '\n'.join(''.join(x) for x in self.board)
+
+    def show_js(self):
+        return str([''.join(x) for x in self.board])
 
     # Play a move at coord and remove any captured stones
     def add_move(self, color, coord, ignore_repeat = False):

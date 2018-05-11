@@ -250,7 +250,8 @@ class MyHandler(BaseHTTPRequestHandler):
         if content_type:
             self.send_header('Content-type', content_type)
         self.send_header('Content-length', bytes(len(data)))
-        # todo: add cache headers
+        # allow the browser to cache these assets for 30 seconds
+        self.send_header('Cache-Control', 'public, max-age=30')
         self.end_headers()
 
         self.wfile.write(data)

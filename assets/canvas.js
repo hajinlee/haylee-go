@@ -1,6 +1,7 @@
 var myCanvas = document.getElementById('test');
 var ctx = myCanvas.getContext('2d');
 
+// Fixing the go board position if necessary
 //myCanvas.style.position = 'absolute';
 //myCanvas.style.left = '50px';
 //myCanvas.style.top = '50px';
@@ -15,6 +16,25 @@ var board_height = (cell_height * board_size) + (margin * 2);
 
 myCanvas.width = board_width;
 myCanvas.height = board_height;
+
+// if any stones are on the board, this is an array of strings,
+// one per row, like '+++@@OO+++'
+var stone_positions = null;
+
+// start loading the background image
+var background = new Image();
+background.src = "assets/kaya.jpg";
+
+var white_stone = new Image();
+white_stone.src = "assets/white.png";
+
+var black_stone = new Image();
+black_stone.src = "assets/black.png"
+
+// after the background image finishes loading, redraw the board
+background.addEventListener('load', function(event) { drawBoard(); }, true);
+white_stone.addEventListener('load', function(event) { drawBoard(); }, true);
+black_stone.addEventListener('load', function(event) { drawBoard(); }, true);
 
 function coordToPixel(x, y) {
   let x_pos = (x * cell_width) + margin;
@@ -39,7 +59,30 @@ function onMouseClick(event) {
   clickToSubmit(pos.y, pos.x);
 }
 
+function starPoint(x_pos, y_pos) {
+  ctx.beginPath();
+  ctx.arc(x_pos,y_pos,5,0,2*Math.PI);
+  ctx.fill();
+}
+
+function drawStone(color, x, y) {
+  let pos = coordToPixel(x, y);
+  var img = color == 'white' ? white_stone : black_stone;
+  ctx.drawImage(img, pos.x - 11, pos.y - 11, 22, 22);
+}
+
+/* Draw stone using an arc:
+ctx.beginPath();
+ctx.arc(pos.x,pos.y,11,0,2*Math.PI);
+ctx.stroke();
+ctx.fillStyle = color;
+ctx.fill();
+*/
+
 myCanvas.addEventListener('click', onMouseClick, true);
+
+// whenever the window resizes, redraw the board
+window.addEventListener('resize', function(event) { drawBoard(); }, true);
 
 function clickToSubmit(x, y) {
   var xbox = document.getElementById('xcoord');
@@ -50,64 +93,78 @@ function clickToSubmit(x, y) {
   submit_button.click();
 }
 
-ctx.fillStyle = 'AntiqueWhite';
-ctx.fillRect( 0, 0, board_width, board_height );
+function drawBoard() {
+  // draw the wood board background image
+  if(background.complete /* && white_stone.complete && black_stone.complete */) {
+    // all the images are loaded now
 
-for (let x=margin; x<=board_height-margin; x+=cell_height){
-  ctx.strokeStyle = '#000000';
-  ctx.beginPath();
-  ctx.moveTo( margin, x );
-  ctx.lineTo( board_width-margin, x );
-  ctx.closePath();
-  ctx.lineWidth = 1;
-  ctx.fillStyle = '#000000';
-  ctx.stroke();
-}
+    // draw the background
+    ctx.drawImage( background, 0, 0, board_width, board_height );
+  } else {
+    // the image has not finished downloading yet.
+    // stop here. We will try to draw again when the image finishes,
+    // in the "load" event handler.
+    return; // don't draw a white board
 
-for (let x=margin; x<=board_width-margin; x+=cell_width){
-  ctx.strokeStyle = '#000000';
-  ctx.beginPath();
-  ctx.moveTo( x, margin );
-  ctx.lineTo( x, board_height-margin );
-  ctx.closePath();
-  ctx.lineWidth = 1;
-  ctx.fillStyle = '#000000';
-  ctx.stroke();
-}
+    // (just in case the board needs a white background:)
+    // ctx.beginPath();
+    // ctx.rect(0, 0, board_width, board_height);
+    // ctx.fillStyle = '#ffffff';
+    // ctx.fill();
+  }
 
-function starPoint(x_pos, y_pos) {
-  ctx.beginPath();
-  ctx.arc(x_pos,y_pos,5,0,2*Math.PI);
-  ctx.fill();
-}
+  // Draw vertical lines on the board.
+  for (let x=margin; x<=board_height-margin; x+=cell_height){
+    ctx.strokeStyle = '#000000';
+    ctx.beginPath();
+    ctx.moveTo( margin, x );
+    ctx.lineTo( board_width-margin, x );
+    ctx.closePath();
+    ctx.lineWidth = 1;
+    ctx.fillStyle = '#000000';
+    ctx.stroke();
+  }
 
-for (let x=(cell_width*3)+margin; x<=(cell_width*15)+margin; x+=cell_width*6){
-  starPoint(x, 93);
-  starPoint(x, 249);
-  starPoint(x, 405);
-}
+  // Draw horizontal lines on the board.
+  for (let x=margin; x<=board_width-margin; x+=cell_width){
+    ctx.strokeStyle = '#000000';
+    ctx.beginPath();
+    ctx.moveTo( x, margin );
+    ctx.lineTo( x, board_height-margin );
+    ctx.closePath();
+    ctx.lineWidth = 1;
+    ctx.fillStyle = '#000000';
+    ctx.stroke();
+  }
 
-function addStone(color, x, y) {
-  let pos = coordToPixel(x, y);
+  for (let x=(cell_width*3)+margin; x<=(cell_width*15)+margin; x+=cell_width*6){
+    starPoint(x, 93);
+    starPoint(x, 249);
+    starPoint(x, 405);
+  }
 
-  ctx.beginPath();
-  ctx.arc(pos.x,pos.y,11,0,2*Math.PI);
-  ctx.stroke();
-  ctx.fillStyle = color;
-  ctx.fill();
-}
-
-// given a list of strings like ["+++@++", ...]
-// perform addStone() for all the black and white stones
-function updateBoard(board_js) {
-  for (let i=0; i<19; i++) {
-    for (let j=0; j<19; j++) {
-      if (board_js[i][j] == '@') {
-        addStone('black', j, i)
-      }
-      else if (board_js[i][j] == 'O') {
-        addStone('white', j, i)
+  if(stone_positions) {
+    for (let i=0; i<19; i++) {
+      for (let j=0; j<19; j++) {
+        if (stone_positions[i][j] == '@') {
+          drawStone('black', j, i)
+        }
+        else if (stone_positions[i][j] == 'O') {
+          drawStone('white', j, i)
+        }
       }
     }
   }
+}
+
+// update the stone positions.
+// given a list of strings like ["+++@++", ...]
+function updateBoard(board_js) {
+  // update the stone positions.
+  stone_positions = [];
+  for(let i = 0; i < 19; i++) {
+    stone_positions.push(board_js[i]);
+  }
+  // redraw the board
+  drawBoard();
 }

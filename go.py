@@ -32,8 +32,8 @@ class Game(object):
             return 'WHITE'
 
     # Receives user input as a string and remove the dead stones
-    def remove_dead_stones(self, str): # once coords come as '6,5 12,7 9,6'
-        coords = str.split(' ')
+    def remove_dead_stones(self, stone_string): # once coords come as ' 6,5  12,7 9,6 '
+        coords = stone_string.strip().split()
         remove = [tuple(map(int, x.split(','))) for x in coords]
         for x in remove:
             if self.board.which_color(x) == WHITE:

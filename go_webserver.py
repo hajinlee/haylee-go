@@ -139,9 +139,6 @@ class MyHandler(BaseHTTPRequestHandler):
         x('Error: not found')
         return
 
-    def show_board(self):
-        return '<script>var board_js = ' + game_state.game.board.show_js() + '; updateBoard(board_js);</script>'
-
     def greeting(self):
         playing_messages = [
         "Hmmm, that's an interesting move!",

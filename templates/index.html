@@ -10,7 +10,7 @@
   <div class="container">
     <h1>Welcome to Haylee Go</h1>
 
-    <canvas id="test" style="border:2px solid #000000;">
+    <canvas id="myboard" style="border:2px solid #000000;">
       If the browser can't display the canvas, this text is rendered.
     </canvas>
 
@@ -20,7 +20,8 @@
       updateBoard(board_js);
     </script>
 
-    {{ GREETING }}
+
+    <div id="greeting_message">{{ GREETING }}</div>
     <div id="illegal_move_message" style="display: none;">Illegal move. Try again?</div>
     {{ PROMPT }}
 {% if METHOD == 'POST' %}
@@ -35,29 +36,21 @@
 {% endif %}
 
 {% if GAME_STATE.state in ['PLAYING', 'WAITING'] %}
-  <form method="post">
+  <!--<form method="post"> Now handled from XHR
     <input type="hidden" id="xcoord" name="xcoord"><br>
     <input type="hidden" id="ycoord" name="ycoord"><br>
     <input type="hidden" name="command" value="New Move">
     <input type="submit" id="submit" name="button" style="display: none">
-  </form>
+  </form>-->
 
-  <form method="post">
-    <input type="hidden" name="command" value="Pass">
-    <input type="submit" name="button" value="Pass" style="background-color:MediumSeaGreen;color:white;font-size:150%">
-  </form>
+  <button type="button" onclick="passXHR()" style="background-color:MediumSeaGreen;color:white;font-size:150%">Pass</button>
 
-  <form method="post">
-    <input type="hidden" name="command" value="Resign">
-    <input type="submit" id="resign" name="button" value="Resign" style="background-color:Orange;color:white;font-size:150%">
-  </form>
+  <button type="button" onclick="resignXHR()" style="background-color:Orange;color:white;font-size:150%">Resign</button>
 
 {% endif %}
 
-  <form method="post">
-    <input type="hidden" name="command" value="New Game">
-    <input type="submit" name="button" value="New Game" style="background-color:SlateBlue;color:white;font-size:150%">
-  </form>
+  <button type="button" onclick="newGameXHR()" style="background-color:SlateBlue;color:white;font-size:150%">New Game</button>
+
 
 </div>
 </body>

@@ -52,9 +52,9 @@ class MyHandler(BaseHTTPRequestHandler):
         x = self.wfile.write
 
         x(index_html.render(METHOD = 'GET', GAME_STATE = game_state,
-                          GREETING = self.greeting(),
-                          RUNNING_BOARD = game_state.game.board.show_js(),
-                          PROMPT = self.prompt()))
+                            GREETING = self.greeting(),
+                            RUNNING_BOARD = game_state.game.board.show_js(),
+                            PROMPT = self.prompt()))
 
     def do_POST(self):
         ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
@@ -135,10 +135,10 @@ class MyHandler(BaseHTTPRequestHandler):
             x = self.wfile.write
 
             x(index_html.render(METHOD = 'POST', GAME_STATE = game_state,
-                            GREETING = self.greeting(),
-                            RUNNING_BOARD = game_state.game.board.show_js(),
-                            PROMPT = self.prompt(),
-                            RESULT_PRINT = self.result_print()))
+                                GREETING = self.greeting(),
+                                RUNNING_BOARD = game_state.game.board.show_js(),
+                                PROMPT = self.prompt(),
+                                RESULT_PRINT = self.result_print()))
 
         elif accept_type == 'text/javascript':
             self.send_header('Content-type', 'text/javascript')
@@ -149,8 +149,8 @@ class MyHandler(BaseHTTPRequestHandler):
                           'game_state': game_state.state,
                           'illegal': game_state.illegal,
                           'removed': game_state.removed}))
-            # we've told the browser about the illegal move.
-            # Now we can forget about it.
+            # The browser delivered the illegal move message.
+            # Turn off the illegal switch
             game_state.illegal = False
 
     def error_bad_request(self):

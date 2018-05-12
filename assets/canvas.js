@@ -1,4 +1,4 @@
-var myCanvas = document.getElementById('test');
+var myCanvas = document.getElementById('myboard');
 var ctx = myCanvas.getContext('2d');
 
 // Fixing the go board position if necessary
@@ -59,16 +59,10 @@ function onMouseClick(event) {
 
   var rbox = document.getElementById('remove');
   if (rbox) {
-    rbox.value = rbox.value + ' ' + pos.y.toFixed(0) + ',' + pos.x.toFixed(0);
+    rbox.value = rbox.value + ' ' + pos.y.toFixed(0) + ',' + pos.x.toFixed(0); // click to select dead
   }
   else {
-    // about to try to play a stone
-
-    // is there already a stone here?
-    if(stone_positions[pos.y][pos.x] !== '+') {
-      return; // can't play on top of an existing stone
-    }
-    clickToSubmitXHR(pos.y, pos.x);
+    clickToSubmitXHR(pos.y, pos.x); // click to play
   }
 }
 
@@ -94,9 +88,9 @@ ctx.fill();
 
 myCanvas.addEventListener('click', onMouseClick, true);
 
-// whenever the window resizes, redraw the board
 window.addEventListener('resize', function(event) { drawBoard(); }, true);
 
+/* Not in use any more
 function clickToSubmit(x, y) {
   var xbox = document.getElementById('xcoord');
   xbox.value = x.toFixed(0);
@@ -105,32 +99,29 @@ function clickToSubmit(x, y) {
   var submit_button = document.getElementById('submit');
   submit_button.click();
 }
+*/
 
 function clickToSelect(x, y) {
   var rbox = document.getElementById('remove');
   rbox.value = rbox.value += x.toFixed(0) + ',' + y.toFixed(0) + ' ';
-
 }
 
 function drawBoard() {
-  // draw the wood board background image
-  if(background.complete /* && white_stone.complete && black_stone.complete */) {
-    // all the images are loaded now
-
-    // draw the background
+  // draw the board and stone images first
+  if(background.complete && white_stone.complete && black_stone.complete) {
     ctx.drawImage( background, 0, 0, board_width, board_height );
   } else {
     // the image has not finished downloading yet.
     // stop here. We will try to draw again when the image finishes,
     // in the "load" event handler.
-    return; // don't draw a white board
-
-    // (just in case the board needs a white background:)
-    // ctx.beginPath();
-    // ctx.rect(0, 0, board_width, board_height);
-    // ctx.fillStyle = '#ffffff';
-    // ctx.fill();
+    return;
   }
+
+/* draw a board with white background:
+ctx.beginPath();
+ctx.rect(0, 0, board_width, board_height);
+ctx.fillStyle = '#ffffff';
+ctx.fill(); */
 
   // Draw vertical lines on the board.
   for (let x=margin; x<=board_height-margin; x+=cell_height){
@@ -156,6 +147,7 @@ function drawBoard() {
     ctx.stroke();
   }
 
+  // Draw star points on the board.
   for (let x=(cell_width*3)+margin; x<=(cell_width*15)+margin; x+=cell_width*6){
     starPoint(x, 93);
     starPoint(x, 249);
@@ -188,16 +180,25 @@ function updateBoard(board_js) {
   drawBoard();
 }
 
-// function clickToSelectXHR()
-// function clickToPassXHR()
-// function clickToResignXHR()
-// function clickToNewGameXHR()
+// Different options
 
 function clickToSubmitXHR(xcoord, ycoord) {
-    sendXHR({'command': 'New Move', 'xcoord': xcoord, 'ycoord': ycoord});
+  sendXHR({'command': 'New Move', 'xcoord': xcoord, 'ycoord': ycoord});
 }
-function clickToPassXHR() {
+function passXHR() {
   sendXHR({'command': 'Pass'});
+}
+
+function resignXHR() {
+  sendXHR({'command': 'Resign'});
+}
+
+function newGameXHR() {
+  sendXHR({'command': 'New Game'});
+}
+
+function clickToSelectXHR() {
+  sendXHR({'command': 'Dead Stones', 'dead': remove});
 }
 
 function sendXHR(params) {
@@ -216,8 +217,9 @@ function sendXHR(params) {
        updateBoard(response['board_js']);
 
        let elem = document.getElementById('illegal_move_message');
+       let greet = document.getElementById('greeting_message')
 
-       if(response['illegal']) {
+       if (response['illegal']) {
          // a player just attempted to play an illegal move
          // show the error message
          elem.style.display = 'block';

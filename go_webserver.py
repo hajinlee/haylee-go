@@ -4,6 +4,25 @@ import cgi
 import os
 import random
 import urlparse
+from jinja2 import Environment, FileSystemLoader, select_autoescape, StrictUndefined
+
+env = Environment(
+    loader=FileSystemLoader('./templates'),
+    #autoescape=select_autoescape(['html', 'xml']),
+    trim_blocks = True, undefined = StrictUndefined
+)
+
+index_html = env.get_template('index.html')
+
+form_html_move = '<form method="post"> <input type="hidden" id="xcoord" name="xcoord"><br> <input type="hidden" id="ycoord" name="ycoord"><br> <input type="hidden" name="command" value="New Move"> <input type="submit" id="submit" name="button" style="display: none"></form>'
+
+form_html_pass = '<form method="post"> <input type="hidden" name="command" value="Pass"><input type="submit" name="button" value="Pass" style="background-color:MediumSeaGreen;color:white;font-size:150%"></form>'
+
+form_html_resign = '<form method="post"> <input type="hidden" name="command" value="Resign"> <input type="submit" id="resign" name="button" value="Resign" style="background-color:Orange;color:white;font-size:150%"></form>'
+
+form_html_dead = '<form method="post"> Select dead stones: <input type="text" id="remove" name="dead"><br> <input type="hidden" name="command" value="Dead Stones"><input type="submit" name="button" value="Submit" style="background-color:Tomato;color:white;font-size:150%"></form>'
+
+
 
 # To track the game state across requests, we use a "ServerState" object.
 # In the future, this might be stored in a database.
@@ -24,33 +43,6 @@ class ServerState(object):
 
 game_state = ServerState()
 
-html_header = '''<!DOCTYPE html>
-<html>
-<head>
-<title>Haylee Go</title>
-<link rel="icon" href="assets/haylee-logo-192x192.png" sizes="192x192" />
-<link rel="stylesheet" href="assets/haylee-go.css" type="text/css" />
-</head>
-<body><div class="container">'''
-
-form_html_move = '<form method="post"> <input type="hidden" id="xcoord" name="xcoord"><br> <input type="hidden" id="ycoord" name="ycoord"><br> <input type="hidden" name="command" value="New Move"> <input type="submit" id="submit" name="button" style="display: none"></form>'
-
-form_html_pass = '<form method="post"> <input type="hidden" name="command" value="Pass"><input type="submit" name="button" value="Pass" style="background-color:MediumSeaGreen;color:white;font-size:150%"></form>'
-
-form_html_resign = '<form method="post"> <input type="hidden" name="command" value="Resign"> <input type="submit" id="resign" name="button" value="Resign" style="background-color:Orange;color:white;font-size:150%"></form>'
-
-form_html_dead = '<form method="post"> Select dead stones: <input type="text" name="dead"><br> <input type="hidden" name="command" value="Dead Stones"><input type="submit" name="button" value="Submit" style="background-color:Tomato;color:white;font-size:150%"></form>'
-
-form_html_new = '<form method="post"> <input type="hidden" name="command" value="New Game"> <input type="submit" name="button" value="New Game" style="background-color:SlateBlue;color:white;font-size:150%">'
-
-html_footer = '''</div></body></html>'''
-
-canvas = '''<canvas id="test" style="border:2px solid #000000;">
-  If the browser can't display the canvas, this text is rendered.
-</canvas>
-<script src="assets/canvas.js"></script>
-'''
-
 class MyHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
@@ -68,12 +60,11 @@ class MyHandler(BaseHTTPRequestHandler):
         self.end_headers()
         x = self.wfile.write
 
-        x(html_header)
-        x(self.show_board())
-        x(self.greeting())
-        x(self.prompt())
-        x(self.playing_tools())
-        x(html_footer)
+        middle_content = self.greeting() + \
+            self.prompt() + \
+            self.playing_tools()
+
+        x(index_html.render(RUNNING_BOARD = game_state.game.board.show_js(), MIDDLE_CONTENT = middle_content))
 
     def do_POST(self):
         ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
@@ -137,14 +128,13 @@ class MyHandler(BaseHTTPRequestHandler):
         self.end_headers()
         x = self.wfile.write
 
-        x(html_header)
-        x(self.show_board())
-        x(self.greeting())
-        x(self.remove_dead())
-        x(self.result_print())
-        x(self.prompt())
-        x(self.playing_tools())
-        x(html_footer)
+        middle_content = self.greeting() + \
+            self.remove_dead() + \
+            self.result_print() + \
+            self.prompt() + \
+            self.playing_tools()
+
+        x(index_html.render(RUNNING_BOARD = game_state.game.board.show_js(), MIDDLE_CONTENT = middle_content))
 
     def error_bad_request(self):
         self.send_response(400)
@@ -163,10 +153,7 @@ class MyHandler(BaseHTTPRequestHandler):
         return
 
     def show_board(self):
-        return '<h1>Welcome to Haylee Go</h1>' + \
-                canvas + \
-             '<script>var board_js = ' + game_state.game.board.show_js() + '; updateBoard(board_js);</script>'
-
+        return '<script>var board_js = ' + game_state.game.board.show_js() + '; updateBoard(board_js);</script>'
 
     def greeting(self):
         playing_messages = [
@@ -223,13 +210,13 @@ class MyHandler(BaseHTTPRequestHandler):
             else:
                 return '<h4>Play or Pass!</h4>'
         else:
-            return ' '
+            return ''
 
     def playing_tools(self):
         if game_state.state in [PLAYING, WAITING]:
-            return form_html_move + form_html_pass + '<br>' + form_html_resign + '<br>' + form_html_new + '<br>'
+            return form_html_move + form_html_pass + '<br>' + form_html_resign + '<br>'
         else:
-            return form_html_new
+            return ''
 
     def do_GET_asset(self, filename):
         # respond to a request for a static asset, e.g. image file
@@ -255,6 +242,7 @@ class MyHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
         self.wfile.write(data)
+
 
 if __name__ == '__main__':
     server = HTTPServer(('localhost', 8000), MyHandler)

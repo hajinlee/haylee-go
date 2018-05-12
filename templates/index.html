@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Haylee Go</title>
+    <link rel="icon" href="assets/haylee-logo-192x192.png" sizes="192x192" />
+    <link rel="stylesheet" href="assets/haylee-go.css" type="text/css" />
+  </head>
+
+<body>
+  <div class="container">
+    <h1>Welcome to Haylee Go</h1>
+
+    <canvas id="test" style="border:2px solid #000000;">
+      If the browser can't display the canvas, this text is rendered.
+    </canvas>
+
+    <script src="assets/canvas.js"></script>
+    <script>
+      var board_js = {{ RUNNING_BOARD }};
+      updateBoard(board_js);
+      console.log("HELLO");
+    </script>
+
+    {{ MIDDLE_CONTENT }}
+
+
+
+    <form method="post">
+      <input type="hidden" name="command" value="New Game">
+        <input type="submit" name="button" value="New Game" style="background-color:SlateBlue;color:white;font-size:150%">
+    </form>
+  </div>
+</body>
+</html>

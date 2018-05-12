@@ -21,8 +21,37 @@
       console.log("HELLO");
     </script>
 
-    {{ MIDDLE_CONTENT }}
+    {{ GREETING }}
+    {{ PROMPT }}
+{% if METHOD == 'POST' %}
+    {% if GAME_STATE.state == 'SCORING' and GAME_STATE.removed == False %}
+       <form method="post"> Select dead stones:
+         <input type="text" id="remove" name="dead"><br>
+         <input type="hidden" name="command" value="Dead Stones">
+         <input type="submit" name="button" value="Submit" style="background-color:Tomato;color:white;font-size:150%">
+       </form>
+    {% endif %}
+    {{ RESULT_PRINT }}
+{% endif %}
 
+{% if GAME_STATE.state in ['PLAYING', 'WAITING'] %}
+<form method="post">
+  <input type="hidden" id="xcoord" name="xcoord"><br>
+  <input type="hidden" id="ycoord" name="ycoord"><br>
+  <input type="hidden" name="command" value="New Move">
+  <input type="submit" id="submit" name="button" style="display: none">
+</form>
+<form method="post">
+  <input type="hidden" name="command" value="Pass">
+  <input type="submit" name="button" value="Pass" style="background-color:MediumSeaGreen;color:white;font-size:150%">
+</form>
+<br>
+<form method="post">
+  <input type="hidden" name="command" value="Resign">
+  <input type="submit" id="resign" name="button" value="Resign" style="background-color:Orange;color:white;font-size:150%">
+</form>
+<br>
+{% endif %}
 
 
     <form method="post">

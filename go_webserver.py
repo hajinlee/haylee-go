@@ -14,16 +14,6 @@ env = Environment(
 
 index_html = env.get_template('index.html')
 
-form_html_move = '<form method="post"> <input type="hidden" id="xcoord" name="xcoord"><br> <input type="hidden" id="ycoord" name="ycoord"><br> <input type="hidden" name="command" value="New Move"> <input type="submit" id="submit" name="button" style="display: none"></form>'
-
-form_html_pass = '<form method="post"> <input type="hidden" name="command" value="Pass"><input type="submit" name="button" value="Pass" style="background-color:MediumSeaGreen;color:white;font-size:150%"></form>'
-
-form_html_resign = '<form method="post"> <input type="hidden" name="command" value="Resign"> <input type="submit" id="resign" name="button" value="Resign" style="background-color:Orange;color:white;font-size:150%"></form>'
-
-form_html_dead = '<form method="post"> Select dead stones: <input type="text" id="remove" name="dead"><br> <input type="hidden" name="command" value="Dead Stones"><input type="submit" name="button" value="Submit" style="background-color:Tomato;color:white;font-size:150%"></form>'
-
-
-
 # To track the game state across requests, we use a "ServerState" object.
 # In the future, this might be stored in a database.
 
@@ -60,11 +50,10 @@ class MyHandler(BaseHTTPRequestHandler):
         self.end_headers()
         x = self.wfile.write
 
-        middle_content = self.greeting() + \
-            self.prompt() + \
-            self.playing_tools()
-
-        x(index_html.render(RUNNING_BOARD = game_state.game.board.show_js(), MIDDLE_CONTENT = middle_content))
+        x(index_html.render(METHOD = 'GET', GAME_STATE = game_state,
+                          GREETING = self.greeting(),
+                          RUNNING_BOARD = game_state.game.board.show_js(),
+                          PROMPT = self.prompt()))
 
     def do_POST(self):
         ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
@@ -128,13 +117,11 @@ class MyHandler(BaseHTTPRequestHandler):
         self.end_headers()
         x = self.wfile.write
 
-        middle_content = self.greeting() + \
-            self.remove_dead() + \
-            self.result_print() + \
-            self.prompt() + \
-            self.playing_tools()
-
-        x(index_html.render(RUNNING_BOARD = game_state.game.board.show_js(), MIDDLE_CONTENT = middle_content))
+        x(index_html.render(METHOD = 'POST', GAME_STATE = game_state,
+                          GREETING = self.greeting(),
+                          RUNNING_BOARD = game_state.game.board.show_js(),
+                          PROMPT = self.prompt(),
+                          RESULT_PRINT = self.result_print()))
 
     def error_bad_request(self):
         self.send_response(400)
@@ -181,12 +168,6 @@ class MyHandler(BaseHTTPRequestHandler):
         else:
             return "<br><br><h3>Thanks for the game!</h3>"
 
-    def remove_dead(self):
-        if game_state.state == SCORING and game_state.removed == False:
-            return form_html_dead
-        else:
-            return ' '
-
     def result_print(self):
         if game_state.removed == True:
             game_state.state = OVER
@@ -209,12 +190,6 @@ class MyHandler(BaseHTTPRequestHandler):
                 return '<h4>Illegal move. Try again?</h4>'
             else:
                 return '<h4>Play or Pass!</h4>'
-        else:
-            return ''
-
-    def playing_tools(self):
-        if game_state.state in [PLAYING, WAITING]:
-            return form_html_move + form_html_pass + '<br>' + form_html_resign + '<br>'
         else:
             return ''
 

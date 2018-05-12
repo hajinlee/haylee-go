@@ -21,6 +21,7 @@
     </script>
 
     {{ GREETING }}
+    <div id="illegal_move_message" style="display: none;">Illegal move. Try again?</div>
     {{ PROMPT }}
 {% if METHOD == 'POST' %}
     {% if GAME_STATE.state == 'SCORING' and GAME_STATE.removed == False %}
@@ -34,29 +35,30 @@
 {% endif %}
 
 {% if GAME_STATE.state in ['PLAYING', 'WAITING'] %}
-<form method="post">
-  <input type="hidden" id="xcoord" name="xcoord"><br>
-  <input type="hidden" id="ycoord" name="ycoord"><br>
-  <input type="hidden" name="command" value="New Move">
-  <input type="submit" id="submit" name="button" style="display: none">
-</form>
-<form method="post">
-  <input type="hidden" name="command" value="Pass">
-  <input type="submit" name="button" value="Pass" style="background-color:MediumSeaGreen;color:white;font-size:150%">
-</form>
-<br>
-<form method="post">
-  <input type="hidden" name="command" value="Resign">
-  <input type="submit" id="resign" name="button" value="Resign" style="background-color:Orange;color:white;font-size:150%">
-</form>
-<br>
+  <form method="post">
+    <input type="hidden" id="xcoord" name="xcoord"><br>
+    <input type="hidden" id="ycoord" name="ycoord"><br>
+    <input type="hidden" name="command" value="New Move">
+    <input type="submit" id="submit" name="button" style="display: none">
+  </form>
+
+  <form method="post">
+    <input type="hidden" name="command" value="Pass">
+    <input type="submit" name="button" value="Pass" style="background-color:MediumSeaGreen;color:white;font-size:150%">
+  </form>
+
+  <form method="post">
+    <input type="hidden" name="command" value="Resign">
+    <input type="submit" id="resign" name="button" value="Resign" style="background-color:Orange;color:white;font-size:150%">
+  </form>
+
 {% endif %}
 
+  <form method="post">
+    <input type="hidden" name="command" value="New Game">
+    <input type="submit" name="button" value="New Game" style="background-color:SlateBlue;color:white;font-size:150%">
+  </form>
 
-    <form method="post">
-      <input type="hidden" name="command" value="New Game">
-        <input type="submit" name="button" value="New Game" style="background-color:SlateBlue;color:white;font-size:150%">
-    </form>
-  </div>
+</div>
 </body>
 </html>

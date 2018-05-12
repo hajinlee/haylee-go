@@ -4,6 +4,7 @@ import cgi
 import os
 import random
 import urlparse
+import json
 from jinja2 import Environment, FileSystemLoader, select_autoescape, StrictUndefined
 
 env = Environment(
@@ -61,18 +62,25 @@ class MyHandler(BaseHTTPRequestHandler):
         if ctype == 'application/x-www-form-urlencoded':
             length = int(self.headers.getheader('content-length'))
             postvars = cgi.parse_qs(self.rfile.read(length), keep_blank_values=1)
+            # turn each parameter into a single value instead of a list
+            # e.g. {'command': ['New Move']} -> {'command': 'New Move'}
+            for k in postvars:
+                postvars[k] = postvars[k][0]
+        elif ctype == 'text/javascript':
+            length = int(self.headers.getheader('content-length'))
+            postvars = json.loads(self.rfile.read(length))
         else:
             postvars = {}
 
         if 'command' not in postvars:
             return self.error_bad_request()
 
-        command = postvars['command'][0]
+        command = postvars['command']
 
         if command == 'New Move':
             try:
-                xcoord = int(postvars['xcoord'][0])
-                ycoord = int(postvars['ycoord'][0])
+                xcoord = int(postvars['xcoord'])
+                ycoord = int(postvars['ycoord'])
                 game_state.state = PLAYING
             except ValueError:
                 game_state.illegal = True
@@ -105,23 +113,45 @@ class MyHandler(BaseHTTPRequestHandler):
             game_state.state = OVER
 
         elif command == 'Dead Stones':
-            if postvars['dead'][0] != '':
-                game_state.game.remove_dead_stones(postvars['dead'][0])
+            if postvars['dead'] != '':
+                game_state.game.remove_dead_stones(postvars['dead'])
             game_state.removed = True
 
         else:
             return self.error_bad_request()
 
-        self.send_response(200)
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
-        x = self.wfile.write
+        # for browser nagivation, we respond with an HTML result
+        # for AJAX/XHR requests, we respond with a JSON result
+        accept_type = self.headers.getheader('accept')
+        if accept_type != 'text/javascript':
+            # default to HTML response
+            accept_type = 'text/html'
 
-        x(index_html.render(METHOD = 'POST', GAME_STATE = game_state,
-                          GREETING = self.greeting(),
-                          RUNNING_BOARD = game_state.game.board.show_js(),
-                          PROMPT = self.prompt(),
-                          RESULT_PRINT = self.result_print()))
+        self.send_response(200)
+
+        if accept_type == 'text/html':
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            x = self.wfile.write
+
+            x(index_html.render(METHOD = 'POST', GAME_STATE = game_state,
+                            GREETING = self.greeting(),
+                            RUNNING_BOARD = game_state.game.board.show_js(),
+                            PROMPT = self.prompt(),
+                            RESULT_PRINT = self.result_print()))
+
+        elif accept_type == 'text/javascript':
+            self.send_header('Content-type', 'text/javascript')
+            self.end_headers()
+            x = self.wfile.write
+            x(json.dumps({'board_js': game_state.game.board.show_json(),
+                          'greeting': self.greeting(),
+                          'game_state': game_state.state,
+                          'illegal': game_state.illegal,
+                          'removed': game_state.removed}))
+            # we've told the browser about the illegal move.
+            # Now we can forget about it.
+            game_state.illegal = False
 
     def error_bad_request(self):
         self.send_response(400)

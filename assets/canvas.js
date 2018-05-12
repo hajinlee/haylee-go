@@ -62,7 +62,13 @@ function onMouseClick(event) {
     rbox.value = rbox.value + ' ' + pos.y.toFixed(0) + ',' + pos.x.toFixed(0);
   }
   else {
-    clickToSubmit(pos.y, pos.x);
+    // about to try to play a stone
+
+    // is there already a stone here?
+    if(stone_positions[pos.y][pos.x] !== '+') {
+      return; // can't play on top of an existing stone
+    }
+    clickToSubmitXHR(pos.y, pos.x);
   }
 }
 
@@ -180,4 +186,61 @@ function updateBoard(board_js) {
   }
   // redraw the board
   drawBoard();
+}
+
+// function clickToSelectXHR()
+// function clickToPassXHR()
+// function clickToResignXHR()
+// function clickToNewGameXHR()
+
+function clickToSubmitXHR(xcoord, ycoord) {
+    sendXHR({'command': 'New Move', 'xcoord': xcoord, 'ycoord': ycoord});
+}
+function clickToPassXHR() {
+  sendXHR({'command': 'Pass'});
+}
+
+function sendXHR(params) {
+  const xhr = new XMLHttpRequest();
+  const url = './'; // send request to the current URL
+
+  const data = JSON.stringify(params);
+
+  xhr.responseType = 'json';
+  xhr.onreadystatechange = function() {
+	   if (xhr.readyState === XMLHttpRequest.DONE) {
+       let response = xhr.response; // <-- this is the JSON we got back from the server
+
+       // refresh the browser UI according to the latest server response:
+
+       updateBoard(response['board_js']);
+
+       let elem = document.getElementById('illegal_move_message');
+
+       if(response['illegal']) {
+         // a player just attempted to play an illegal move
+         // show the error message
+         elem.style.display = 'block';
+       } else {
+         // hide the error message
+         elem.style.display = 'none';
+       }
+
+       // todo: check response['game_state'] and response['removed']
+       // and show or hide DOM elements as appropriate
+
+       // todo: check response['greeting'] and update the greeting element
+       }
+     };
+
+  xhr.open('POST', url, true);
+  xhr.responseType = 'json'; // parse the resonse body as JSON
+
+  // "I am sending you some Javascript (JSON) in the body"
+  xhr.setRequestHeader('Content-Type', 'text/javascript');
+
+  // "Please reply in the JSON language, not HTML"
+  xhr.setRequestHeader('Accept', 'text/javascript');
+
+  xhr.send(data);
 }

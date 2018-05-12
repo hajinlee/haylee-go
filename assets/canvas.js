@@ -56,7 +56,14 @@ function onMouseClick(event) {
   var offsetY = event.clientY - rect.top;
   var pos = pixelToCoord(offsetX, offsetY);
   console.log(offsetX, offsetY, pos.x, pos.y);
-  clickToSubmit(pos.y, pos.x);
+
+  var rbox = document.getElementById('remove');
+  if (rbox) {
+    rbox.value = rbox.value + ' ' + pos.y.toFixed(0) + ',' + pos.x.toFixed(0);
+  }
+  else {
+    clickToSubmit(pos.y, pos.x);
+  }
 }
 
 function starPoint(x_pos, y_pos) {
@@ -91,6 +98,12 @@ function clickToSubmit(x, y) {
   ybox.value = y.toFixed(0);
   var submit_button = document.getElementById('submit');
   submit_button.click();
+}
+
+function clickToSelect(x, y) {
+  var rbox = document.getElementById('remove');
+  rbox.value = rbox.value += x.toFixed(0) + ',' + y.toFixed(0) + ' ';
+
 }
 
 function drawBoard() {

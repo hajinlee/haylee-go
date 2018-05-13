@@ -239,10 +239,10 @@ function sendXHR(params) {
   xhr.responseType = 'json'; // parse the resonse body as JSON
 
   // "I am sending you some Javascript (JSON) in the body"
-  xhr.setRequestHeader('Content-Type', 'text/javascript');
+  xhr.setRequestHeader('Content-Type', 'application/json');
 
   // "Please reply in the JSON language, not HTML"
-  xhr.setRequestHeader('Accept', 'text/javascript');
+  xhr.setRequestHeader('Accept', 'application/json');
 
   xhr.send(data);
 }

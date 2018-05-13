@@ -66,7 +66,7 @@ class MyHandler(BaseHTTPRequestHandler):
             # e.g. {'command': ['New Move']} -> {'command': 'New Move'}
             for k in postvars:
                 postvars[k] = postvars[k][0]
-        elif ctype == 'text/javascript':
+        elif ctype == 'application/json':
             length = int(self.headers.getheader('content-length'))
             postvars = json.loads(self.rfile.read(length))
         else:
@@ -123,7 +123,7 @@ class MyHandler(BaseHTTPRequestHandler):
         # for browser nagivation, we respond with an HTML result
         # for AJAX/XHR requests, we respond with a JSON result
         accept_type = self.headers.getheader('accept')
-        if accept_type != 'text/javascript':
+        if accept_type != 'application/json':
             # default to HTML response
             accept_type = 'text/html'
 
@@ -140,8 +140,8 @@ class MyHandler(BaseHTTPRequestHandler):
                                 PROMPT = self.prompt(),
                                 RESULT_PRINT = self.result_print()))
 
-        elif accept_type == 'text/javascript':
-            self.send_header('Content-type', 'text/javascript')
+        elif accept_type == 'application/json':
+            self.send_header('Content-type', 'application/json')
             self.end_headers()
             x = self.wfile.write
             x(json.dumps({'board_js': game_state.game.board.show_json(),

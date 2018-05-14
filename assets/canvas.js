@@ -260,8 +260,8 @@ function sendXHR(params) {
        let pass = document.getElementById('pass');
        let resign = document.getElementById('resign');
        if (response['game_state'] == 'WAITING' || response['game_state'] == 'PLAYING') {
-         pass.style.display = 'block';
-         resign.style.display = 'block';
+         pass.style.display = 'inline-block';
+         resign.style.display = 'inline-block';
        } else {
          pass.style.display = 'none';
          resign.style.display = 'none';

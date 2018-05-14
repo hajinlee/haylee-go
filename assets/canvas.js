@@ -57,8 +57,10 @@ function onMouseClick(event) {
   var pos = pixelToCoord(offsetX, offsetY);
   console.log(offsetX, offsetY, pos.x, pos.y);
 
-  var rbox = document.getElementById('remove');
-  if (rbox) {
+  // check if the "remove dead stones" controls are visible
+  var remove_div = document.getElementById('remove');
+  if (remove_div.style.display != 'none') {
+    var rbox = document.getElementById('remove_this');
     rbox.value = rbox.value + ' ' + pos.y.toFixed(0) + ',' + pos.x.toFixed(0); // click to select dead
   }
   else {
@@ -101,10 +103,10 @@ function clickToSubmit(x, y) {
 }
 */
 
-function clickToSelect(x, y) {
-  var rbox = document.getElementById('remove');
-  rbox.value = rbox.value += x.toFixed(0) + ',' + y.toFixed(0) + ' ';
-}
+// function clickToSelect(x, y) {
+//  var rbox = document.getElementById('remove');
+//  rbox.value = rbox.value += x.toFixed(0) + ',' + y.toFixed(0) + ' ';
+// }
 
 function drawBoard() {
   // draw the board and stone images first
@@ -197,14 +199,13 @@ function newGameXHR() {
   sendXHR({'command': 'New Game'});
 }
 
-function clickToSelectXHR() {
-  sendXHR({'command': 'Dead Stones', 'dead': remove});
+function removeXHR(need_remove) {
+  sendXHR({'command': 'Dead Stones', 'dead': need_remove});
 }
 
 function sendXHR(params) {
   const xhr = new XMLHttpRequest();
   const url = './'; // send request to the current URL
-
   const data = JSON.stringify(params);
 
   xhr.responseType = 'json';
@@ -213,28 +214,47 @@ function sendXHR(params) {
        let response = xhr.response; // <-- this is the JSON we got back from the server
 
        // refresh the browser UI according to the latest server response:
-
        updateBoard(response['board_js']);
 
        let elem = document.getElementById('illegal_move_message');
-       let greet = document.getElementById('greeting_message')
-
        if (response['illegal']) {
-         // a player just attempted to play an illegal move
-         // show the error message
          elem.style.display = 'block';
        } else {
-         // hide the error message
          elem.style.display = 'none';
        }
 
-       // todo: check response['game_state'] and response['removed']
-       // and show or hide DOM elements as appropriate
+       let remove = document.getElementById('remove');
+       if (response['game_state'] == 'SCORING' && response['removed'] == false) {
+          // we are waiting for the player to select dead stones
+          remove.style.display = 'block';
+       } else if(response['game_state'] == 'SCORING' && response['removed'] == true) {
+         // the game is over and the score has been calculated
+         remove.style.display = 'none';
 
-       // todo: check response['greeting'] and update the greeting element
+         // todo: ... display the score and the winner ...
+
+       } else {
+         remove.style.display = 'none';
        }
-     };
 
+       if (response['game_state'] == 'WAITING') {
+         document.getElementById('greeting_message').innerHTML = '<br><br><h3>Hello! How about a nice game of Go?</h3>';
+       } else if (response['game_state'] == 'PLAYING') {
+          document.getElementById('greeting_message').innerHTML = response['greeting'];
+       } else if (response['game_state'] == 'SCORING') {
+         document.getElementById('greeting_message').innerHTML = '<br><br><h3>That was a tough game!</h3>';
+       } else if (response['game_state'] == 'OVER') {
+         document.getElementById('greeting_message').innerHTML = '<br><br><h3>Thank you for the game!</h3>';
+       }
+
+       if (response['game_state'] == 'WAITING' || response['game_state'] == 'PLAYING') {
+         document.getElementById('turn').style.display = 'block';
+         document.getElementById('turn').innerHTML = '<h4>' + response['turn'] + ' to play: Play or Pass!</h4>';
+       } else {
+         document.getElementById('turn').style.display = 'none';
+       }
+     }
+  }
   xhr.open('POST', url, true);
   xhr.responseType = 'json'; // parse the resonse body as JSON
 

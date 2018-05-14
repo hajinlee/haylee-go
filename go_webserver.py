@@ -116,6 +116,7 @@ class MyHandler(BaseHTTPRequestHandler):
             if postvars['dead'] != '':
                 game_state.game.remove_dead_stones(postvars['dead'])
             game_state.removed = True
+            game_state.state = OVER
 
         else:
             return self.error_bad_request()
@@ -147,11 +148,14 @@ class MyHandler(BaseHTTPRequestHandler):
             x(json.dumps({'board_js': game_state.game.board.show_json(),
                           'greeting': self.greeting(),
                           'game_state': game_state.state,
+                          'turn': game_state.game.whose_turn(),
                           'illegal': game_state.illegal,
-                          'removed': game_state.removed}))
+                          'removed': game_state.removed,
+                          'result': self.result_print()}))
             # The browser delivered the illegal move message.
             # Turn off the illegal switch
             game_state.illegal = False
+
 
     def error_bad_request(self):
         self.send_response(400)
@@ -181,13 +185,13 @@ class MyHandler(BaseHTTPRequestHandler):
         "Are you an AGA member yet?",
         ]
 
-        if game_state.state == WAITING:
-            return  '<br><br><h3>Hello! How about a nice game of Go?</h3><h4>' + \
-                    game_state.game.whose_turn() + ' to play:</h4>'
+        #if game_state.state == WAITING:
+        #    return  '<br><br><h3>Hello! How about a nice game of Go?</h3><h4>' + \
+        #            game_state.game.whose_turn() + ' to play:</h4>'
 
-        elif game_state.state == PLAYING:
-            return '<br><br><h3>' + random.choice(playing_messages) + '</h3><h4>' + \
-                   game_state.game.whose_turn() + ' to play:</h4>'
+        if game_state.state == PLAYING:
+            return '<br><br><h3>' + random.choice(playing_messages) + '</h3>'
+                   #game_state.game.whose_turn() + ' to play:</h4>'
 
         elif game_state.state == SCORING:
             return "<br><br><h3>That was a tough game!</h3>"

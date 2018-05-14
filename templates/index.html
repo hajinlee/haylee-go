@@ -20,37 +20,21 @@
       updateBoard(board_js);
     </script>
 
+  <div id="greeting_message"><br><br><h3>Hello! How about a nice game of Go?</h3></div>
 
-    <div id="greeting_message">{{ GREETING }}</div>
-    <div id="illegal_move_message" style="display: none;">Illegal move. Try again?</div>
-    {{ PROMPT }}
-{% if METHOD == 'POST' %}
-    {% if GAME_STATE.state == 'SCORING' and GAME_STATE.removed == False %}
-       <form method="post"> Select dead stones:
-         <input type="text" id="remove" name="dead"><br>
-         <input type="hidden" name="command" value="Dead Stones">
-         <input type="submit" name="button" value="Submit" style="background-color:Tomato;color:white;font-size:150%">
-       </form>
-    {% endif %}
-    {{ RESULT_PRINT }}
-{% endif %}
+  <div id="illegal_move_message" style="display: none;">Illegal move. Try again?</div>
 
-{% if GAME_STATE.state in ['PLAYING', 'WAITING'] %}
-  <!--<form method="post"> Now handled from XHR
-    <input type="hidden" id="xcoord" name="xcoord"><br>
-    <input type="hidden" id="ycoord" name="ycoord"><br>
-    <input type="hidden" name="command" value="New Move">
-    <input type="submit" id="submit" name="button" style="display: none">
-  </form>-->
+  <div id="remove" style="display: none;">Select dead stones:
+  <input id="remove_this" type="text" name="dead">
+  <input type="submit" onclick="removeXHR(document.getElementById('remove_this').value)" style="background-color:Tomato;color:white;font-size:150%"></div>
+
+  <div id="turn" style="display: block"><h4>BLACK to play: Play or Pass!</h4></div>
 
   <button type="button" onclick="passXHR()" style="background-color:MediumSeaGreen;color:white;font-size:150%">Pass</button>
 
   <button type="button" onclick="resignXHR()" style="background-color:Orange;color:white;font-size:150%">Resign</button>
 
-{% endif %}
-
   <button type="button" onclick="newGameXHR()" style="background-color:SlateBlue;color:white;font-size:150%">New Game</button>
-
 
 </div>
 </body>

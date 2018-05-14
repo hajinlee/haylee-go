@@ -92,7 +92,7 @@ myCanvas.addEventListener('click', onMouseClick, true);
 
 window.addEventListener('resize', function(event) { drawBoard(); }, true);
 
-/* Not in use any more
+/*
 function clickToSubmit(x, y) {
   var xbox = document.getElementById('xcoord');
   xbox.value = x.toFixed(0);
@@ -102,11 +102,6 @@ function clickToSubmit(x, y) {
   submit_button.click();
 }
 */
-
-// function clickToSelect(x, y) {
-//  var rbox = document.getElementById('remove');
-//  rbox.value = rbox.value += x.toFixed(0) + ',' + y.toFixed(0) + ' ';
-// }
 
 function drawBoard() {
   // draw the board and stone images first
@@ -170,10 +165,9 @@ ctx.fill(); */
   }
 }
 
-// update the stone positions.
-// given a list of strings like ["+++@++", ...]
+// given a list of strings like ["+++@++", ...],
 function updateBoard(board_js) {
-  // update the stone positions.
+  // update the stone positions
   stone_positions = [];
   for(let i = 0; i < 19; i++) {
     stone_positions.push(board_js[i]);
@@ -216,42 +210,50 @@ function sendXHR(params) {
        // refresh the browser UI according to the latest server response:
        updateBoard(response['board_js']);
 
-       let elem = document.getElementById('illegal_move_message');
+       // show illegal message when appropriate
+       let illegal = document.getElementById('illegal_move_message');
        if (response['illegal']) {
-         elem.style.display = 'block';
+         illegal.style.display = 'block';
        } else {
-         elem.style.display = 'none';
+         illegal.style.display = 'none';
        }
 
+       // ask to select and submit the captured stones
        let remove = document.getElementById('remove');
        if (response['game_state'] == 'SCORING' && response['removed'] == false) {
-          // we are waiting for the player to select dead stones
           remove.style.display = 'block';
-       } else if(response['game_state'] == 'SCORING' && response['removed'] == true) {
-         // the game is over and the score has been calculated
-         remove.style.display = 'none';
-
-         // todo: ... display the score and the winner ...
-
        } else {
          remove.style.display = 'none';
        }
 
+       // show the result when appropriate
+       let result = document.getElementById('result');
+       if(response['game_state'] == 'OVER' && response['removed'] == true) {
+         result.style.display = 'block';
+         result.innerHTML = response['result'];
+       } else {
+         result.style.display = 'none';
+       }
+
+       // fun greeting messages
+       let greet = document.getElementById('greeting_message');
        if (response['game_state'] == 'WAITING') {
-         document.getElementById('greeting_message').innerHTML = '<br><br><h3>Hello! How about a nice game of Go?</h3>';
+         greet.innerHTML = '<br><br><h3>Hello! How about a nice game of Go?</h3>';
        } else if (response['game_state'] == 'PLAYING') {
-          document.getElementById('greeting_message').innerHTML = response['greeting'];
+         greet.innerHTML = response['greeting'];
        } else if (response['game_state'] == 'SCORING') {
-         document.getElementById('greeting_message').innerHTML = '<br><br><h3>That was a tough game!</h3>';
+         greet.innerHTML = '<br><br><h3>That was a tough game!</h3>';
        } else if (response['game_state'] == 'OVER') {
-         document.getElementById('greeting_message').innerHTML = '<br><br><h3>Thank you for the game!</h3>';
+         greet.innerHTML = '<br><br><h3>Thank you for the game!</h3>';
        }
 
+       // prompt people to play
+       let turn = document.getElementById('turn');
        if (response['game_state'] == 'WAITING' || response['game_state'] == 'PLAYING') {
-         document.getElementById('turn').style.display = 'block';
-         document.getElementById('turn').innerHTML = '<h4>' + response['turn'] + ' to play: Play or Pass!</h4>';
+         turn.style.display = 'block';
+         turn.innerHTML = '<h4>' + response['turn'] + ' to play: Play or Pass!</h4>';
        } else {
-         document.getElementById('turn').style.display = 'none';
+         turn.style.display = 'none';
        }
      }
   }

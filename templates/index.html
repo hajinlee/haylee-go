@@ -20,13 +20,15 @@
       updateBoard(board_js);
     </script>
 
-  <div id="greeting_message"><br><br><h3>Hello! How about a nice game of Go?</h3></div>
+  <div id="illegal_move_message" style="display: none;"><br><br>Illegal move. Try again?</div>
 
-  <div id="illegal_move_message" style="display: none;">Illegal move. Try again?</div>
+  <div id="result" style="display: none;">Result</div>
+
+  <div id="greeting_message"><br><br><h3>Hello! How about a nice game of Go?</h3></div>
 
   <div id="remove" style="display: none;">Select dead stones:
   <input id="remove_this" type="text" name="dead">
-  <input type="submit" onclick="removeXHR(document.getElementById('remove_this').value)" style="background-color:Tomato;color:white;font-size:150%"></div>
+  <input type="submit" onclick="removeXHR(document.getElementById('remove_this').value)" style="background-color:Tomato;color:white;font-size:100%"></div>
 
   <div id="turn" style="display: block"><h4>BLACK to play: Play or Pass!</h4></div>
 

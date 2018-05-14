@@ -207,10 +207,10 @@ class MyHandler(BaseHTTPRequestHandler):
             game_state.removed = False
             if black > white:
                 diff = black - white
-                return 'Final score: Black ' + str(black) + ' points, White ' + str(white) + ' points<br>Black won by ' + str(diff) + ' points.<br>'
+                return '<br><br>Final score: Black ' + str(black) + ' points, White ' + str(white) + ' points<br>Black won by ' + str(diff) + ' points.<br>'
             else:
                 diff = white - black
-                return 'Final score: Black ' + str(black) + ' points, White ' + str(white) + ' points<br>White won by ' + str(diff) + ' points.<br>'
+                return '<br><br>Final score: Black ' + str(black) + ' points, White ' + str(white) + ' points<br>White won by ' + str(diff) + ' points.<br>'
         else:
             return ' '
 

@@ -255,6 +255,17 @@ function sendXHR(params) {
        } else {
          turn.style.display = 'none';
        }
+
+       // hide pass and resign buttons when they are not needed
+       let pass = document.getElementById('pass');
+       let resign = document.getElementById('resign');
+       if (response['game_state'] == 'WAITING' || response['game_state'] == 'PLAYING') {
+         pass.style.display = 'block';
+         resign.style.display = 'block';
+       } else {
+         pass.style.display = 'none';
+         resign.style.display = 'none';
+       }
      }
   }
   xhr.open('POST', url, true);

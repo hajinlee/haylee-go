@@ -251,5 +251,16 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 if __name__ == '__main__':
-    server = HTTPServer(('localhost', 8000), MyHandler)
+
+    # look for a "PORT" environment variable to override the standard listening port
+    port_override = os.getenv('PORT')
+    if port_override:
+        port = int(port_override)
+    else:
+        port = 8000
+
+    server = HTTPServer(('', port), MyHandler)
+
+    print 'Listening on port', port
+
     server.serve_forever()

@@ -32,6 +32,14 @@ class ServerState(object):
         self.removed = False
         self.state = WAITING
 
+    def load_sgf(self, sgf_string):
+        # reload the game based on an SGF
+        self.game = Game.from_sgf(sgf_string)
+        # reset state flags
+        self.illegal = False
+        self.removed = False
+        self.state = WAITING
+
 game_state = ServerState()
 
 class MyHandler(BaseHTTPRequestHandler):
@@ -117,6 +125,10 @@ class MyHandler(BaseHTTPRequestHandler):
                 game_state.game.remove_dead_stones(postvars['dead'])
             game_state.removed = True
             game_state.state = OVER
+
+        elif command == 'Upload SGF':
+            game_state.load_sgf(postvars['sgf'])
+            # todo: add error handling in case a bad SGF is uploaded
 
         else:
             return self.error_bad_request()

@@ -5,6 +5,7 @@
 
 import copy
 from collections import deque
+import sgf
 
 EMPTY = '+'
 BLACK = '@'
@@ -88,6 +89,54 @@ class Game(object):
                 j += 1
             i += 1
         return spaces
+
+
+    @classmethod
+    def from_sgf(cls, sgf_string):
+        # given an SGF file (passed in as a Unicode string),
+        # play out the moves and return the resulting Game
+
+        collection = sgf.parse(sgf_string)
+
+        # only look at the first game in the SGF file
+        gametree = collection.children[0]
+
+        game = None
+        board_size = None
+        rule_set = None
+
+        # for each node in the game...
+        # (note: we only look at the main variation)
+        for j, node in enumerate(gametree):
+            p = node.properties
+            if 'SZ' in p:
+                board_size = int(p['SZ'][0])
+            if 'RU' in p:
+                rule_set = {'Japanese': JAPANESE, 'Chinese': CHINESE}[p['RU'][0]]
+
+            # if game is not initialized yet, and we have enough info to do so,
+            # initialize it now
+            if (game is None) and (board_size and rule_set):
+                game = Game(board_size, rule_set = rule_set)
+                print 'initialized game, board_size', board_size
+
+            # todo:add player names, etc
+
+            def decode_sgf_coordinate(s):
+                # convert from an SGF coordinate string like "bc" to integer coordinates like 2,3
+                y, x = map(lambda x: ord(x) - ord('a'), s)
+                return (x, y)
+
+            if 'B' in p:
+                # Black player plays
+                print 'black at', decode_sgf_coordinate(p['B'][0])
+                game.board.add_move(BLACK, decode_sgf_coordinate(p['B'][0]))
+            if 'W' in p:
+                # White player plays
+                print 'white at', decode_sgf_coordinate(p['W'][0])
+                game.board.add_move(WHITE, decode_sgf_coordinate(p['W'][0]))
+
+        return game
 
 class Board(object):
     def __init__(self, size, data=None):

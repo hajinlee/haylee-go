@@ -197,6 +197,10 @@ function removeXHR(need_remove) {
   sendXHR({'command': 'Dead Stones', 'dead': need_remove});
 }
 
+function uploadSGFXHR(sgf_string) {
+  sendXHR({'command': 'Upload SGF', 'sgf': sgf_string});
+}
+
 function sendXHR(params) {
   const xhr = new XMLHttpRequest();
   const url = './'; // send request to the current URL

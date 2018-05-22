@@ -38,6 +38,9 @@
 
   <button type="button" onclick="newGameXHR()" style="background-color:#B1A296;color:white;font-size:120%">New Game</button>
 
+  <div style="display: block"><br>
+    <button id="sgf_download_button" onclick = "downloadSGF();" style="background-color:#7395AE;color:white;font-size:100%">Download SGF</button>
+  </div>
   <div style="display: block"><br>Upload SGF:
   <input id="sgf_upload_file" type="file" name="sgf" accept=".sgf" onchange="sgf_upload_go(this);" style="display: none;">
   <button id="sgf_upload_button" onclick="sgf_upload_start(event);" style="background-color:#7395AE;color:white;font-size:100%">Choose File</div>

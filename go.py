@@ -6,6 +6,7 @@
 import copy
 from collections import deque
 import sgf
+import cStringIO
 
 EMPTY = '+'
 BLACK = '@'
@@ -90,6 +91,36 @@ class Game(object):
             i += 1
         return spaces
 
+    def to_sgf(self):
+        # return the SGF for this game in the form of a Unicode string
+        gametree = sgf.GameTree(None)
+        root_node = sgf.Node(None, None)
+        root_node.properties = {
+        'GM': ['1'],
+        'FF': ['4'],
+        'SZ': [unicode(self.board.size)],
+        'RU': [{JAPANESE: 'Japanese', CHINESE: 'Chinese'}[self.rule_set]],
+        }
+        gametree.nodes.append(root_node)
+
+        prev = root_node
+        for color, coord in self.board.moves:
+            sgf_color = {BLACK:'B', WHITE: 'W'}[color]
+            def encode_sgf_coordinate(c):
+                # convert from integer coordinates like 2,3 to an SGF coordinate string like "bc"
+                y, x = map(lambda x: chr(ord('a') + x), c)
+                return '%s%s' % (x,y)
+            sgf_coord = encode_sgf_coordinate(coord)
+            node = sgf.Node(None, prev)
+            node.properties = {sgf_color: [sgf_coord]}
+            gametree.nodes.append(node)
+            prev = node
+
+        collection = sgf.Collection()
+        collection.children.append(gametree)
+        output = cStringIO.StringIO()
+        collection.output(output)
+        return output.getvalue()
 
     @classmethod
     def from_sgf(cls, sgf_string):
@@ -155,6 +186,7 @@ class Board(object):
         self.whites_prisoners = 0
         self.blacks_prisoners = 0
         self.previous_positions = deque([], 8)
+        self.moves = []
 
     # For copying board positions
     def copy(self):
@@ -163,6 +195,7 @@ class Board(object):
         ret.last_move = self.last_move
         ret.whites_prisoners = self.whites_prisoners
         ret.blacks_prisoners = self.blacks_prisoners
+        ret.moves = self.moves[:]
         # note: previous_positions is NOT copied over
         return ret
 
@@ -211,6 +244,7 @@ class Board(object):
         self.board[row][col] = color
         self.last_move = [color, coord]
         self.previous_positions.append(copy.deepcopy(self.board))
+        self.moves.append([color, coord])
 
     # Returns a set of coordinates for captured groups
     def is_capturing(self, color, coord):

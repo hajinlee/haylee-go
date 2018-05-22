@@ -201,6 +201,10 @@ function uploadSGFXHR(sgf_string) {
   sendXHR({'command': 'Upload SGF', 'sgf': sgf_string});
 }
 
+function downloadSGF(sgf_string) {
+  window.open('./sgf', '_blank');
+}
+
 function sendXHR(params) {
   const xhr = new XMLHttpRequest();
   const url = './'; // send request to the current URL

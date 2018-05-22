@@ -10,11 +10,13 @@ WHITE = 'O'
 
 if __name__ == '__main__':
     board_size = 9
-    opts, args = getopt.getopt(sys.argv[1:], "", ["19x19","13x13","9x9"])
+    output_sgf = False
+    opts, args = getopt.getopt(sys.argv[1:], "", ["19x19","13x13","9x9","sgf"])
     for key, val in opts:
         if key == '--19x19': board_size = 19
         elif key == '--13x13': board_size = 13
         elif key == '--9x9': board_size = 9
+        elif key == '--sgf': output_sgf = True
 
     in_filename = args[0] if len(args) >= 1 else '-'
     in_file = open(in_filename, 'r') if in_filename != '-' else sys.stdin
@@ -67,3 +69,7 @@ if __name__ == '__main__':
         print 'Black won by', black - white, 'points.'
     else:
         print 'White won by', white - black, 'points.'
+
+    if output_sgf:
+        print 'SGF is:'
+        print game.to_sgf()

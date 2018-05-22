@@ -40,6 +40,9 @@ class ServerState(object):
         self.removed = False
         self.state = WAITING
 
+    def get_sgf(self):
+        return self.game.to_sgf()
+
 game_state = ServerState()
 
 class MyHandler(BaseHTTPRequestHandler):
@@ -53,6 +56,10 @@ class MyHandler(BaseHTTPRequestHandler):
         # check for requests for static assets
         if len(path_components) == 2 and path_components[0] == 'assets':
             return self.do_GET_asset(path_components[1])
+
+        # check for requests for the SGF
+        if len(path_components) == 1 and path_components[0] == 'sgf':
+            return self.do_GET_sgf()
 
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
@@ -235,6 +242,16 @@ class MyHandler(BaseHTTPRequestHandler):
                 return '<h4>Play or Pass!</h4>'
         else:
             return ''
+
+    def do_GET_sgf(self):
+        data = game_state.get_sgf().encode('utf-8')
+        self.send_response(200)
+        self.send_header('Content-Type', 'application/x-go-sgf')
+        self.send_header('Content-Disposition', 'attachment; filename=game.sgf')
+        self.send_header('Content-Length', bytes(len(data)))
+        self.send_header('Cache-Control', 'no-cache, no-store')
+        self.end_headers()
+        self.wfile.write(data)
 
     def do_GET_asset(self, filename):
         # respond to a request for a static asset, e.g. image file

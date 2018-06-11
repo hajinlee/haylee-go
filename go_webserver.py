@@ -19,7 +19,6 @@ index_html = env.get_template('index.html')
 # In the future, this might be stored in a database.
 
 # values for self.state:
-WAITING = 'WAITING' # before the first move
 PLAYING = 'PLAYING' # new moves are being played
 SCORING = 'SCORING' # no more moves, players are marking dead groups now
 OVER = 'OVER' # game is finished and scored
@@ -30,7 +29,7 @@ class ServerState(object):
         self.game = Game(19)
         self.illegal = False
         self.removed = False
-        self.state = WAITING
+        self.state = PLAYING
 
     def load_sgf(self, sgf_string):
         # reload the game based on an SGF
@@ -38,7 +37,7 @@ class ServerState(object):
         # reset state flags
         self.illegal = False
         self.removed = False
-        self.state = WAITING
+        self.state = PLAYING
 
     def get_sgf(self):
         return self.game.to_sgf()
@@ -121,8 +120,9 @@ class MyHandler(BaseHTTPRequestHandler):
             game_state.game.board.add_pass()
 
         elif command == 'New Game':
-            game_state.game = Game(19)
-            game_state.state = WAITING
+            board_size = int(postvars['board_size'])
+            game_state.game = Game(board_size)
+            game_state.state = PLAYING
 
         elif command == 'Resign':
             game_state.state = OVER
@@ -204,13 +204,8 @@ class MyHandler(BaseHTTPRequestHandler):
         "Are you an AGA member yet?",
         ]
 
-        #if game_state.state == WAITING:
-        #    return  '<br><br><h3>Hello! How about a nice game of Go?</h3><h4>' + \
-        #            game_state.game.whose_turn() + ' to play:</h4>'
-
         if game_state.state == PLAYING:
             return '<br><br><h3>' + random.choice(playing_messages) + '</h3>'
-                   #game_state.game.whose_turn() + ' to play:</h4>'
 
         elif game_state.state == SCORING:
             return "<br><br><h3>That was a tough game!</h3>"
@@ -234,7 +229,7 @@ class MyHandler(BaseHTTPRequestHandler):
             return ' '
 
     def prompt(self):
-        if game_state.state in [PLAYING, WAITING]:
+        if game_state.state == PLAYING:
             if game_state.illegal:
                 game_state.illegal = False
                 return '<h4>Illegal move. Try again?</h4>'

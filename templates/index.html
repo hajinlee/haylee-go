@@ -10,9 +10,7 @@
   <div class="container">
     <h1>Welcome to Haylee Go</h1>
 
-    <canvas id="myboard" style="border:2px solid #000000;">
-      If the browser can't display the canvas, this text is rendered.
-    </canvas>
+    <canvas id="myboard" style="border:1px solid #000000;display: none">Go Board</canvas>
 
     <script src="assets/canvas.js"></script>
     <script>
@@ -30,13 +28,17 @@
   <input id="remove_this" type="text" name="dead">
   <input type="submit" onclick="removeXHR(document.getElementById('remove_this').value)" style="background-color:#557A95;color:white;font-size:100%"></div>
 
-  <div id="turn" style="display: block"><h4>BLACK to play: Play or Pass!</h4></div>
+  <div id="turn" style="display: none;"><h4>BLACK to play: Play or Pass!</h4></div>
 
-  <button id="pass" type="button" onclick="passXHR()" style="background-color:#5D5C61;color:white;font-size:120%;display: inline-block">Pass</button>
+  <button id="pass" type="button" onclick="passXHR()" style="background-color:#5D5C61;color:white;font-size:120%;display: none;">Pass</button>
 
-  <button id="resign" type="button" onclick="resignXHR()" style="background-color:#ADADAD;color:white;font-size:120%;display: inline-block">Resign</button>
+  <button id="resign" type="button" onclick="resignXHR()" style="background-color:#ADADAD;color:white;font-size:120%;display: none;">Resign</button>
 
-  <button type="button" onclick="newGameXHR()" style="background-color:#B1A296;color:white;font-size:120%">New Game</button>
+  <button type="button" onclick="newGameXHR(19)" style="background-color:#B1A296;color:white;font-size:120%">New 19x19</button>
+
+  <button type="button" onclick="newGameXHR(13)" style="background-color:#5D5C61;color:white;font-size:120%">New 13x13</button>
+
+  <button type="button" onclick="newGameXHR(9)" style="background-color:#ADADAD;color:white;font-size:120%">New 9x9</button>
 
   <div><br>
     <button id="sgf_download_button" onclick = "downloadSGF();" style="background-color:#7395AE;color:white;font-size:100%">Download SGF</button>

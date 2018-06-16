@@ -195,7 +195,6 @@ function updateBoard(board_js) {
 }
 
 // Different options
-
 function clickToSubmitXHR(xcoord, ycoord) {
   sendXHR({'command': 'New Move', 'xcoord': xcoord, 'ycoord': ycoord});
 }
@@ -279,16 +278,16 @@ function sendXHR(params) {
          greet.innerHTML = 'Hello! How about a nice game of Go?';
        }
 
-       // prompt people to play
+       // whose turn?
        let turn = document.getElementById('turn');
        if (response['game_state'] === 'PLAYING') {
          turn.style.display = 'block';
-         turn.innerHTML = response['turn'] + ' to play: Play or Pass!';
+         turn.innerHTML = response['turn'] + ' to play';
        } else {
          turn.style.display = 'none';
        }
 
-       // hide pass and resign buttons when they are not needed
+       // hide buttons when they are not needed
        let pass = document.getElementById('pass');
        let resign = document.getElementById('resign');
        let sgf_down = document.getElementById('sgf_down');
@@ -298,6 +297,11 @@ function sendXHR(params) {
          resign.style.display = 'inline-block';
          sgf_down.style.display = 'inline-block';
          sgf_up.style.display = 'inline-block';
+       } else if (response['game_state'] === 'OVER') {
+         sgf_down.style.display = 'inline-block';
+         sgf_up.style.display = 'none';
+         pass.style.display = 'none';
+         resign.style.display = 'none';
        } else {
          pass.style.display = 'none';
          resign.style.display = 'none';

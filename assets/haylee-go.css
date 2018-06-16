@@ -55,8 +55,9 @@ button {
 
 #header {
   background-color: white;
+  font-family: "Times";
   font-size: 3vw;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
   margin-left: 0.5em;
   margin-top: 0.5em;
   padding-bottom: 0.5em;

@@ -272,18 +272,18 @@ function sendXHR(params) {
        if (response['game_state'] === 'PLAYING') {
          greet.innerHTML = response['greeting'];
        } else if (response['game_state'] === 'SCORING') {
-         greet.innerHTML = '<br><br><h3>That was a tough game!</h3>';
+         greet.innerHTML = 'That was a tough game!';
        } else if (response['game_state'] === 'OVER') {
-         greet.innerHTML = '<br><br><h3>Thank you for the game!</h3>';
+         greet.innerHTML = 'Thank you for the game!';
        } else {
-         greet.innerHTML = '<br><br><h3>Hello! How about a nice game of Go?</h3>';
+         greet.innerHTML = 'Hello! How about a nice game of Go?';
        }
 
        // prompt people to play
        let turn = document.getElementById('turn');
        if (response['game_state'] === 'PLAYING') {
          turn.style.display = 'block';
-         turn.innerHTML = '<h4>' + response['turn'] + ' to play: Play or Pass!</h4>';
+         turn.innerHTML = response['turn'] + ' to play: Play or Pass!';
        } else {
          turn.style.display = 'none';
        }
@@ -291,12 +291,18 @@ function sendXHR(params) {
        // hide pass and resign buttons when they are not needed
        let pass = document.getElementById('pass');
        let resign = document.getElementById('resign');
+       let sgf_down = document.getElementById('sgf_down');
+       let sgf_up = document.getElementById('sgf_up');
        if (response['game_state'] === 'PLAYING') {
          pass.style.display = 'inline-block';
          resign.style.display = 'inline-block';
+         sgf_down.style.display = 'inline-block';
+         sgf_up.style.display = 'inline-block';
        } else {
          pass.style.display = 'none';
          resign.style.display = 'none';
+         sgf_down.style.display = 'none';
+         sgf_up.style.display = 'none';
        }
      }
   }

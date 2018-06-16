@@ -205,13 +205,13 @@ class MyHandler(BaseHTTPRequestHandler):
         ]
 
         if game_state.state == PLAYING:
-            return '<br><br><h3>' + random.choice(playing_messages) + '</h3>'
+            return random.choice(playing_messages)
 
         elif game_state.state == SCORING:
-            return "<br><br><h3>That was a tough game!</h3>"
+            return "That was a tough game!"
 
         else:
-            return "<br><br><h3>Thanks for the game!</h3>"
+            return "Thanks for the game!"
 
     def result_print(self):
         if game_state.removed == True:
@@ -221,10 +221,10 @@ class MyHandler(BaseHTTPRequestHandler):
             game_state.removed = False
             if black > white:
                 diff = black - white
-                return '<br><br>Final score: Black ' + str(black) + ' points, White ' + str(white) + ' points<br>Black won by ' + str(diff) + ' points.<br>'
+                return 'Final score: Black ' + str(black) + ' points, White ' + str(white) + ' points<br>Black won by ' + str(diff) + ' points.<br>'
             else:
                 diff = white - black
-                return '<br><br>Final score: Black ' + str(black) + ' points, White ' + str(white) + ' points<br>White won by ' + str(diff) + ' points.<br>'
+                return 'Final score: Black ' + str(black) + ' points, White ' + str(white) + ' points<br>White won by ' + str(diff) + ' points.<br>'
         else:
             return ' '
 

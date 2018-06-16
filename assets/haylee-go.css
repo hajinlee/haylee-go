@@ -1,7 +1,70 @@
-body {
-    font-family: sans-serif;
-    box-sizing: border-box;
-    -webkit-font-smoothing: antialiased;
+html, body {
+  font-family: "Courier New";
+  margin: 0;
+  height: 100%;
+}
+
+button {
+  font-family: "Courier New";
+  font-weight: bold;
+  font-size: 20px;
+  padding: 10, 10
+}
+
+#main {
+  background-color: #81D8D0;
+  overflow: hidden;
+  height: 100%;
+}
+#myboard {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1em;
+}
+
+#new_19, #new_13, #new_9 {
+  background-color: #ffe6e6;
+  color: #669999;
+  width: 15vw;
+  padding: 15px;
+}
+
+#pass, #resign, #sgf_down, #sgf_up, #remove_this {
+  background-color: #ffe6e6;
+  color: #669999;
+  width: 10em;
+  padding: 5px;
+}
+
+#greeting_message {
+  font-size: 3vw;
+  font-weight: bold;
+  text-shadow: 1px 1px #669999;
+  color: white;
+  text-align: center;
+  margin-top: 1em;
+}
+
+#turn, #illegal_move_message, #result, #remove {
+  font-size: 2vw;
+  color: white;
+  text-align: center;
+  margin-top: 1em;
+}
+
+#header {
+  background-color: white;
+  font-size: 3vw;
+  letter-spacing: 2px;
+  margin-left: 0.5em;
+  margin-top: 0.5em;
+  padding-bottom: 0.5em;
+  text-shadow: 1px 1px #669999;
+  font-weight: bold;
+  color: #81D8D0;
+  text-align: left;
+  overflow: hidden;
 }
 
 .container {
@@ -11,27 +74,11 @@ body {
   padding-right: 15px;
 }
 
-.btn-success {
-  color: #fff;
-  background-color: #5cb85c;
-  border-color: #4cae4c;
-
-  .btn-success:focus, .btn-success.focus {
-    color: #fff;
-    background-color: #449d44;
-    border-color: #255625;
-  }
-
-input.resign {
-  background-color: MediumSeaGreen;
-  color: white;
-  font-size: 400%;
+.center-container {
+  text-align: center;
 }
 
-.col-sm-4 {
-  position: relative;
-  min-height: 1px;
-  padding-left: 15px;
-  padding-right: 15px;
-  width: 33.33%;
+.center-container a {
+  display: inline-block;
+  margin-top: 1em;
 }

@@ -1,16 +1,27 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Haylee Go</title>
+    <title>Haylee&ampGo</title>
     <link rel="icon" href="assets/haylee-logo-192x192.png" sizes="192x192" />
     <link rel="stylesheet" href="assets/haylee-go.css" type="text/css" />
   </head>
 
 <body>
-  <div class="container">
-    <h1>Welcome to Haylee Go</h1>
+  <section id="header">HAYLEE&ampGO</section>
 
-    <canvas id="myboard" style="border:1px solid #000000;display: none">Go Board</canvas>
+  <section id="main">
+
+  <div id="top_nav">
+    <div class="center-container">
+      <a><button id="pass" onclick="passXHR()" style="display: none;">Pass</button></a>
+      <a><button id="resign" onclick="resignXHR()" style="display: none;">Resign</button></a>
+      <a><button id="sgf_down" onclick = "downloadSGF();" style="display: none;">Download SGF</button></a>
+      <a><input id="sgf_upload_file" type="file" name="sgf" accept=".sgf" onchange="sgf_upload_go(this);" style="display: none;">
+      <button id="sgf_up" onclick="sgf_upload_start(event);" style="display: none;">Upload SGF</button></a>
+    </div>
+  </div>
+
+    <canvas id="myboard" style="display: none">Go Board</canvas>
 
     <script src="assets/canvas.js"></script>
     <script>
@@ -18,63 +29,25 @@
       updateBoard(board_js);
     </script>
 
-  <div id="illegal_move_message" style="display: none;"><br><br>Illegal move. Try again?</div>
+    <div id="illegal_move_message" style="display: none;">Illegal move. Try again?</div>
 
-  <div id="result" style="display: none;">Result</div>
+    <div id="turn" style="display: none;">BLACK to play: Play or Pass!</div>
 
-  <div id="greeting_message"><br><br><h3>Hello! How about a nice game of Go?</h3></div>
+    <div id="result" style="display: none;">Result</div>
 
-  <div id="remove" style="display: none;">Select dead stones:
-  <input id="remove_this" type="text" name="dead">
-  <input type="submit" onclick="removeXHR(document.getElementById('remove_this').value)" style="background-color:#557A95;color:white;font-size:100%"></div>
+    <div id="greeting_message">Hello! Wanna play Go?</div>
 
-  <div id="turn" style="display: none;"><h4>BLACK to play: Play or Pass!</h4></div>
+    <div id="remove" style="display: none;">Select dead stones:
+    <input id="remove_this" type="text" name="dead">
+    <input type="submit" onclick="removeXHR(document.getElementById('remove_this').value)" style="background-color:#557A95;color:white;font-size:100%"></div>
 
-  <button id="pass" type="button" onclick="passXHR()" style="background-color:#5D5C61;color:white;font-size:120%;display: none;">Pass</button>
+    <div class="center-container">
+      <a><button id="new_19" onclick="newGameXHR(19)">19x19</button></a>
+      <a><button id="new_13" onclick="newGameXHR(13)">13x13</button></a>
+      <a><button id="new_9" onclick="newGameXHR(9)">9x9</button></a>
+    </div>
 
-  <button id="resign" type="button" onclick="resignXHR()" style="background-color:#ADADAD;color:white;font-size:120%;display: none;">Resign</button>
-
-  <button type="button" onclick="newGameXHR(19)" style="background-color:#B1A296;color:white;font-size:120%">New 19x19</button>
-
-  <button type="button" onclick="newGameXHR(13)" style="background-color:#5D5C61;color:white;font-size:120%">New 13x13</button>
-
-  <button type="button" onclick="newGameXHR(9)" style="background-color:#ADADAD;color:white;font-size:120%">New 9x9</button>
-
-  <div><br>
-    <button id="sgf_download_button" onclick = "downloadSGF();" style="background-color:#7395AE;color:white;font-size:100%">Download SGF</button>
-  </div>
-  <div><br>
-  <input id="sgf_upload_file" type="file" name="sgf" accept=".sgf" onchange="sgf_upload_go(this);" style="display: none;">
-  <button id="sgf_upload_button" onclick="sgf_upload_start(event);" style="background-color:#2c3e50;color:white;font-size:100%;">Upload SGF</div>
-
-  <script>
-  // supporting code for SGF uploads
-  function sgf_upload_start(event) {
-      event.stopPropagation();
-      event.preventDefault();
-      var input_file = document.getElementById('sgf_upload_file');
-      input_file.click();
-  };
-  function sgf_upload_go(input_file) {
-      if(input_file.files.length < 1) { return; }
-
-      var file = input_file.files[0];
-      if(file.size > 1024*1024) {
- 	        window.alert("File is too large (max 1MB).");
- 	        return;
-      }
-      var reader = new FileReader();
-
-      // clear the files list so that user can re-upload a file by the same name,
-      // and onchange will still fire.
-      input_file.value = '';
-
-      reader.onload = function(evt) {
-         uploadSGFXHR(evt.target.result);
-      };
-      reader.readAsText(file);
-  }
-  </script>
-</div>
+    <script src="assets/sgf.js"></script>
+</section>
 </body>
 </html>

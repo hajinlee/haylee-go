@@ -17,14 +17,8 @@ black_stone.src = "assets/black.png"
 
 var stone_positions = null;
 
-//updateBoard(board_js)
-
-var cell_width = 24;
-var cell_height = 26;
-var margin = 15;
-
 function drawBoard(board_size) {
-  // draw the board and stone images first
+  setBoardParams(board_size)
 
   var board_width = (cell_width * board_size) + (margin * 2);
   var board_height = (cell_height * board_size) + (margin * 2);
@@ -32,6 +26,7 @@ function drawBoard(board_size) {
   myCanvas.width = board_width;
   myCanvas.height = board_height;
 
+  // draw the board and stone images first
   if(background.complete && white_stone.complete && black_stone.complete) {
     ctx.drawImage( background, 0, 0, board_width, board_height );
   } else {
@@ -48,7 +43,7 @@ ctx.fillStyle = '#ffffff';
 ctx.fill(); */
 
   // Draw vertical lines on the board.
-  for (let x=margin; x<=board_height-margin; x+=cell_height){
+  for (let x=margin; x<=board_height-margin+1; x+=cell_height){
     ctx.strokeStyle = '#000000';
     ctx.beginPath();
     ctx.moveTo( margin, x );
@@ -60,7 +55,7 @@ ctx.fill(); */
   }
 
   // Draw horizontal lines on the board.
-  for (let x=margin; x<=board_width-margin; x+=cell_width){
+  for (let x=margin; x<=board_width-margin+1; x+=cell_width){
     ctx.strokeStyle = '#000000';
     ctx.beginPath();
     ctx.moveTo( x, margin );
@@ -96,10 +91,10 @@ ctx.fill(); */
     for (let i=0; i<board_size+1; i++) {
       for (let j=0; j<board_size+1; j++) {
         if (stone_positions[i][j] === '@') {
-          drawStone('black', j, i)
+          drawStone('black', j, i, board_size)
         }
         else if (stone_positions[i][j] === 'O') {
-          drawStone('white', j, i)
+          drawStone('white', j, i, board_size)
         }
       }
     }
@@ -111,13 +106,15 @@ background.addEventListener('load', function(event) { drawBoard(); }, true);
 white_stone.addEventListener('load', function(event) { drawBoard(); }, true);
 black_stone.addEventListener('load', function(event) { drawBoard(); }, true);
 
-function coordToPixel(x, y) {
+function coordToPixel(x, y, board_size) {
+  setBoardParams(board_size);
   let x_pos = (x * cell_width) + margin;
   let y_pos = (y * cell_height) + margin;
   return { x: x_pos, y: y_pos };
 }
 
-function pixelToCoord(x, y) {
+function pixelToCoord(x, y, board_size) {
+  setBoardParams(board_size);
   let x_pos = Math.round((x-margin) / cell_width);
   let y_pos = Math.round((y-margin) / cell_height);
   return { x: x_pos, y: y_pos };
@@ -129,7 +126,14 @@ function onMouseClick(event) {
   var rect = target.getBoundingClientRect();
   var offsetX = event.clientX - rect.left;
   var offsetY = event.clientY - rect.top;
-  var pos = pixelToCoord(offsetX, offsetY);
+  if (event.currentTarget.offsetWidth === 462) {
+    let board_size = 18
+  } else if (event.currentTarget.offsetWidth === 437.2) {
+    let board_size = 12
+  } else {
+    let board_size = 8
+  }
+  var pos = pixelToCoord(offsetX, offsetY, board_size);
   console.log(offsetX, offsetY, pos.x, pos.y);
 
   // check if the "remove dead stones" controls are visible
@@ -149,10 +153,16 @@ function starPoint(x_pos, y_pos) {
   ctx.fill();
 }
 
-function drawStone(color, x, y) {
-  let pos = coordToPixel(x, y);
+function drawStone(color, x, y, board_size) {
+  let pos = coordToPixel(x, y, board_size);
   var img = color === 'white' ? white_stone : black_stone;
-  ctx.drawImage(img, pos.x - 11, pos.y - 11, 22, 22);
+  if (board_size === 18) {
+    ctx.drawImage(img, pos.x - 11, pos.y - 11, 22, 22);
+  } else if (board_size === 12) {
+    ctx.drawImage(img, pos.x - 17, pos.y - 17, 32, 32);
+  } else if (board_size === 8) {
+    ctx.drawImage(img, pos.x - 20, pos.y - 20, 40, 40);
+  }
 }
 
 /* Draw stone using an arc:
@@ -164,7 +174,6 @@ ctx.fill();
 */
 
 myCanvas.addEventListener('click', onMouseClick, true);
-
 window.addEventListener('resize', function(event) { drawBoard(); }, true);
 
 /*
@@ -178,8 +187,6 @@ function clickToSubmit(x, y) {
 }
 */
 
-
-
 // given a list of strings like ["+++@++", ...],
 function updateBoard(board_js) {
   // update the stone positions
@@ -192,6 +199,26 @@ function updateBoard(board_js) {
   }
   // redraw the board
   drawBoard(board_size);
+}
+
+function setBoardParams(board_size) {
+  if (board_size === 18) {
+    cell_height = 26;
+    cell_width = 24;
+    margin = 15;
+  }
+
+  else if (board_size === 12) {
+    cell_height = 26 * 1.4;
+    cell_width = 24 * 1.4;
+    margin = 17;
+  }
+
+  else if (board_size === 8) {
+    cell_height = 26 * 1.8;
+    cell_width = 24 * 1.8;
+    margin = 19;
+  }
 }
 
 // Different options

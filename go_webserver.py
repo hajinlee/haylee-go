@@ -119,6 +119,9 @@ class MyHandler(BaseHTTPRequestHandler):
                 game_state.state = SCORING
             game_state.game.board.add_pass()
 
+        elif command == 'Undo':
+            game_state.game.board.undo()
+
         elif command == 'New Game':
             board_size = int(postvars['board_size'])
             game_state.game = Game(board_size)

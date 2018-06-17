@@ -7,13 +7,14 @@
   </head>
 
 <body>
-  <section id="header">HAYLEE&ampGO</section>
+  <section id="header"><a href='/'>HAYLEE&ampGO</a></section>
 
   <section id="main">
 
   <div id="top_nav">
     <div class="center-container">
       <a><button id="pass" onclick="passXHR()" style="display: none;">Pass</button></a>
+      <a><button id="undo" onclick="undoXHR()" style="display: none;">Undo</button></a>
       <a><button id="resign" onclick="resignXHR()" style="display: none;">Resign</button></a>
       <a><button id="sgf_down" onclick = "downloadSGF();" style="display: none;">Download SGF</button></a>
       <a><input id="sgf_upload_file" type="file" name="sgf" accept=".sgf" onchange="sgf_upload_go(this);" style="display: none;">

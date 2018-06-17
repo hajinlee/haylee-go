@@ -5,10 +5,14 @@ html, body {
 }
 
 button {
-  font-family: "Courier New";
+  font-family: "Times";
   font-weight: bold;
-  font-size: 20px;
   padding: 10, 10
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
 }
 
 #main {
@@ -20,21 +24,24 @@ button {
   display: block;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 1em;
+  margin-top: 2em;
 }
 
 #new_19, #new_13, #new_9 {
   background-color: #ffe6e6;
   color: #669999;
+  font-size: 20px;
   width: 15vw;
   padding: 15px;
 }
 
-#pass, #resign, #sgf_down, #sgf_up, #remove_this {
+#pass, #undo, #resign, #sgf_down, #sgf_up, #remove_this {
   background-color: #ffe6e6;
   color: #669999;
-  width: 10em;
-  padding: 5px;
+  font-size: 15px;
+  width: 12vw;
+  padding: 8px;
+  margin-top: 1em;
 }
 
 #greeting_message {

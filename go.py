@@ -271,6 +271,17 @@ class Board(object):
             self.last_move = [WHITE, 'PASS']
         self.previous_positions.append(['PASS'])
 
+    def undo(self):
+        if self.moves == []:
+            return
+        else:
+            self.moves.pop()
+            self.previous_positions.pop()
+            x, y = self.last_move[1]
+            self.board[x][y] = EMPTY
+            if self.moves != []:
+                self.last_move = self.moves[-1]
+
     def remove_stones(self, remove_list):
         for x in remove_list:
             self.board[x[0]][x[1]] = EMPTY

@@ -174,7 +174,7 @@ ctx.fill();
 */
 
 myCanvas.addEventListener('click', onMouseClick, true);
-window.addEventListener('resize', function(event) { drawBoard(); }, true);
+//window.addEventListener('resize', function(event) { drawBoard(); }, true);
 
 /*
 function clickToSubmit(x, y) {
@@ -227,6 +227,10 @@ function clickToSubmitXHR(xcoord, ycoord) {
 }
 function passXHR() {
   sendXHR({'command': 'Pass'});
+}
+
+function undoXHR() {
+  sendXHR({'command': 'Undo'});
 }
 
 function resignXHR() {
@@ -316,11 +320,13 @@ function sendXHR(params) {
 
        // hide buttons when they are not needed
        let pass = document.getElementById('pass');
+       let undo = document.getElementById('undo');
        let resign = document.getElementById('resign');
        let sgf_down = document.getElementById('sgf_down');
        let sgf_up = document.getElementById('sgf_up');
        if (response['game_state'] === 'PLAYING') {
          pass.style.display = 'inline-block';
+         undo.style.display = 'inline-block';
          resign.style.display = 'inline-block';
          sgf_down.style.display = 'inline-block';
          sgf_up.style.display = 'inline-block';
@@ -328,9 +334,11 @@ function sendXHR(params) {
          sgf_down.style.display = 'inline-block';
          sgf_up.style.display = 'none';
          pass.style.display = 'none';
+         undo.style.display = 'none';
          resign.style.display = 'none';
        } else {
          pass.style.display = 'none';
+         undo.style.display = 'none';
          resign.style.display = 'none';
          sgf_down.style.display = 'none';
          sgf_up.style.display = 'none';

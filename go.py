@@ -185,7 +185,7 @@ class Board(object):
         self.last_move = None
         self.whites_prisoners = 0
         self.blacks_prisoners = 0
-        self.previous_positions = deque([], 8)
+        self.previous_positions = deque([])
         self.moves = []
 
     # For copying board positions
@@ -281,6 +281,8 @@ class Board(object):
             self.board[x][y] = EMPTY
             if self.moves != []:
                 self.last_move = self.moves[-1]
+            else:
+                return
 
     def remove_stones(self, remove_list):
         for x in remove_list:

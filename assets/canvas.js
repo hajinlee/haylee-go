@@ -290,7 +290,7 @@ function sendXHR(params) {
 
        // show the result when appropriate
        let result = document.getElementById('result');
-       if(response['game_state'] === 'OVER' && response['removed'] === true) {
+       if(response['result'] !== " ") {
          result.style.display = 'block';
          result.innerHTML = response['result'];
        } else {

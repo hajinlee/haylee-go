@@ -68,7 +68,8 @@ class MyHandler(BaseHTTPRequestHandler):
         x(index_html.render(METHOD = 'GET', GAME_STATE = game_state,
                             GREETING = self.greeting(),
                             RUNNING_BOARD = game_state.game.board.show_js(),
-                            PROMPT = self.prompt()))
+                            #PROMPT = self.prompt()
+                            ))
 
     def do_POST(self):
         ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
@@ -160,7 +161,7 @@ class MyHandler(BaseHTTPRequestHandler):
             x(index_html.render(METHOD = 'POST', GAME_STATE = game_state,
                                 GREETING = self.greeting(),
                                 RUNNING_BOARD = game_state.game.board.show_js(),
-                                PROMPT = self.prompt(),
+                                #PROMPT = self.prompt(),
                                 RESULT_PRINT = self.result_print()))
 
         elif accept_type == 'application/json':
@@ -224,22 +225,27 @@ class MyHandler(BaseHTTPRequestHandler):
             game_state.removed = False
             if black > white:
                 diff = black - white
-                return 'Final score: Black ' + str(black) + ' points, White ' + str(white) + ' points<br>Black won by ' + str(diff) + ' points.<br>'
+                return 'Final score: Black ' + str(black) + ' points, White ' + str(white) + ' points.<br>Black won by ' + str(diff) + ' points!<br>'
             else:
                 diff = white - black
-                return 'Final score: Black ' + str(black) + ' points, White ' + str(white) + ' points<br>White won by ' + str(diff) + ' points.<br>'
+                return 'Final score: Black ' + str(black) + ' points, White ' + str(white) + ' points.<br>White won by ' + str(diff) + ' points!<br>'
+        elif game_state.state == OVER and game_state.removed == False:
+            if game_state.game.board.last_move[0] == WHITE:
+                return 'WHITE won by resignation!'
+            else:
+                return 'BLACK won by resignation!'
         else:
             return ' '
 
-    def prompt(self):
-        if game_state.state == PLAYING:
-            if game_state.illegal:
-                game_state.illegal = False
-                return '<h4>Illegal move. Try again?</h4>'
-            else:
-                return '<h4>Play or Pass!</h4>'
-        else:
-            return ''
+    # def prompt(self):
+    #     if game_state.state == PLAYING:
+    #         if game_state.illegal:
+    #             game_state.illegal = False
+    #             return 'Illegal move. Try again?'
+    #         else:
+    #             return '<h4>Play or Pass!</h4>'
+    #     else:
+    #         return ''
 
     def do_GET_sgf(self):
         data = game_state.get_sgf().encode('utf-8')

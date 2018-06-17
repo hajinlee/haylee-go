@@ -17,8 +17,10 @@
       <a><button id="undo" onclick="undoXHR()" style="display: none;">Undo</button></a>
       <a><button id="resign" onclick="resignXHR()" style="display: none;">Resign</button></a>
       <a><button id="sgf_down" onclick = "downloadSGF();" style="display: none;">Download SGF</button></a>
+      <!--
       <a><input id="sgf_upload_file" type="file" name="sgf" accept=".sgf" onchange="sgf_upload_go(this);" style="display: none;">
       <button id="sgf_up" onclick="sgf_upload_start(event);" style="display: none;">Upload SGF</button></a>
+    -->
     </div>
   </div>
 
@@ -40,7 +42,7 @@
 
     <div id="remove" style="display: none;">Select dead stones:
     <input id="remove_this" type="text" name="dead">
-    <input type="submit" onclick="removeXHR(document.getElementById('remove_this').value)" style="background-color:#557A95;color:white;font-size:100%"></div>
+    <input id="remove_submit" type="submit" onclick="removeXHR(document.getElementById('remove_this').value)"></div>
 
     <div class="center-container">
       <a><button id="new_19" onclick="newGameXHR(19)">19x19</button></a>

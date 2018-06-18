@@ -120,6 +120,8 @@ function pixelToCoord(x, y, board_size) {
   return { x: x_pos, y: y_pos };
 }
 
+var marked = new Set()
+
 function onMouseClick(event) {
   event = event || window.event;
   var target = event.target || event.srcElement;
@@ -138,9 +140,23 @@ function onMouseClick(event) {
 
   // check if the "remove dead stones" controls are visible
   var remove_div = document.getElementById('remove');
+  var rbox = document.getElementById('remove_this');
   if (remove_div.style.display != 'none') {
-    var rbox = document.getElementById('remove_this');
-    rbox.value = rbox.value + ' ' + pos.y.toFixed(0) + ',' + pos.x.toFixed(0); // click to select dead
+    // create a string key for the set lookup
+    var key = pos.y.toFixed(0) + ',' + pos.x.toFixed(0);
+    if (marked.has(key)) {
+      marked.delete(key)
+      undrawCircle(pos.x, pos.y, board_size)
+    } else {
+      marked.add(key)
+      //rbox.value = rbox.value + ' ' + pos.y.toFixed(0) + ',' + pos.x.toFixed(0); // click to select dead
+      drawCircle(pos.x, pos.y, board_size)
+    }
+    console.log('marked =', marked)
+    rbox.value = '';
+    for(var key of marked) {
+      rbox.value = rbox.value + ' ' + key;
+    }
   }
   else {
     clickToSubmitXHR(pos.y, pos.x); // click to play
@@ -219,6 +235,36 @@ function setBoardParams(board_size) {
     cell_width = 24 * 1.8;
     margin = 19;
   }
+}
+
+function drawCircle(x, y, board_size) {
+  let pos = coordToPixel(x, y, board_size);
+  ctx.beginPath();
+  if (board_size === 18) {
+    ctx.arc(pos.x,pos.y,11,0,2*Math.PI);
+  } else if (board_size === 12) {
+    ctx.arc(pos.x,pos.y,17,0,2*Math.PI);
+  } else if (board_size === 8) {
+    ctx.arc(pos.x,pos.y,20,0,2*Math.PI);
+  }
+  ctx.lineWidth=3;
+  ctx.strokeStyle="red";
+  ctx.stroke();
+}
+
+function undrawCircle(x, y, board_size) {
+  let pos = coordToPixel(x, y, board_size);
+  ctx.beginPath();
+  if (board_size === 18) {
+    ctx.arc(pos.x,pos.y,11,0,2*Math.PI);
+  } else if (board_size === 12) {
+    ctx.arc(pos.x,pos.y,17,0,2*Math.PI);
+  } else if (board_size === 8) {
+    ctx.arc(pos.x,pos.y,20,0,2*Math.PI);
+  }
+  ctx.lineWidth=3;
+  ctx.strokeStyle="white";
+  ctx.stroke();
 }
 
 // Different options
@@ -329,10 +375,10 @@ function sendXHR(params) {
          undo.style.display = 'inline-block';
          resign.style.display = 'inline-block';
          sgf_down.style.display = 'inline-block';
-         sgf_up.style.display = 'inline-block';
+         //sgf_up.style.display = 'inline-block';
        } else if (response['game_state'] === 'OVER') {
          sgf_down.style.display = 'inline-block';
-         sgf_up.style.display = 'none';
+         //sgf_up.style.display = 'none';
          pass.style.display = 'none';
          undo.style.display = 'none';
          resign.style.display = 'none';
@@ -341,7 +387,7 @@ function sendXHR(params) {
          undo.style.display = 'none';
          resign.style.display = 'none';
          sgf_down.style.display = 'none';
-         sgf_up.style.display = 'none';
+         //sgf_up.style.display = 'none';
        }
      }
   }

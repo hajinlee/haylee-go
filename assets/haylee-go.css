@@ -17,7 +17,8 @@ a {
 
 #main {
   background-color: #81D8D3;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: scroll;
   height: 100%;
 }
 #myboard {
@@ -33,6 +34,7 @@ a {
   font-size: 20px;
   width: 15vw;
   padding: 15px;
+  margin-bottom: 2em;
 }
 
 #remove_submit {
@@ -72,9 +74,7 @@ a {
   font-family: "Times";
   font-size: 3vw;
   letter-spacing: 3px;
-  margin-left: 0.5em;
-  margin-top: 0.5em;
-  padding-bottom: 0.5em;
+  padding: 0.5em;
   text-shadow: 1px 1px #669999;
   font-weight: bold;
   color: #81D8D3;

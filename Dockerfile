@@ -2,6 +2,12 @@
 
 FROM python:2.7.15-alpine
 
+# Add dependencies for building psycopg2,
+# if using a Python repo that does not have the binary version
+RUN apk update && \
+    apk add --virtual build-deps gcc python-dev musl-dev && \
+    apk add postgresql-dev
+
 WORKDIR /usr/src/app
 COPY requirements.txt ./
 

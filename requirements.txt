@@ -3,4 +3,4 @@ sgf==0.5
 
 # needed for SQL database
 sqlalchemy==1.2.13
-psycopg2-binary==2.7.5
+psycopg2-binary==2.7.6.1

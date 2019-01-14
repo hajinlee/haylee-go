@@ -2,5 +2,5 @@ Jinja2==2.10
 sgf==0.5
 
 # needed for SQL database
-sqlalchemy==1.2.15
+sqlalchemy==1.2.16
 psycopg2-binary==2.7.6.1

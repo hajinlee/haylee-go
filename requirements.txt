@@ -1,4 +1,4 @@
-Jinja2==2.10
+Jinja2==2.10.1
 sgf==0.5
 
 # needed for SQL database
